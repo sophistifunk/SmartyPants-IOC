@@ -105,7 +105,10 @@ package net.expantra.smartypants.impl
             {
                 //Gather some intel...
 
-                var injectionMetadata : XML = injectionPoint..metadata.(name == "Inject")[0];
+                var injectionMetadata : XMLList = injectionPoint..metadata.(attribute("name") == "Inject");
+
+                if (injectionMetadata.length() == 0)
+                    continue;
 
                 var fieldName : * = Reflection.getPropertyName(injectionPoint);
 
@@ -113,11 +116,14 @@ package net.expantra.smartypants.impl
                 if (fieldType == "*")
                     fieldType = "Object";
 
-                var injectionType : String = injectionMetadata.child("arg").(attribute("key") == "type").attribute("value").toString();
+                var tmp : * = injectionMetadata.child("arg");
+                tmp = tmp.(attribute("key") == "type");
+
+                var injectionType : String = tmp.attribute("value");
                 if (injectionType == "*")
                     injectionType = "Object";
 
-                var injectionName : String = injectionMetadata.child("arg").(attribute("key") == "name").attribute("value").toString();
+                var injectionName : String = injectionMetadata.child("arg").(attribute("key") == "name").attribute("value");
 
                 var providerInjection : Boolean = Reflection.classExtendsOrImplements(fieldType, Provider);
 
@@ -275,7 +281,7 @@ package net.expantra.smartypants.impl
         */
         sp_internal function lookupProviderForCriteria(requestCriteria : InjectorCriteria) : Provider
         {
-            function matchingCriteriaFilter(rule : InjectorCriteria) : Boolean
+            function matchingCriteriaFilter(rule : InjectorCriteria, ...ignored) : Boolean
             {
                 return InjectorCriteria.match(rule, requestCriteria);
             }
@@ -290,11 +296,11 @@ package net.expantra.smartypants.impl
                     return null;
 
                 case 1: //Only one match
-                    return matchingCriteria[0];
+                    return providerList[criteriaList.indexOf(matchingCriteria[0])];
 
                 case 2: //Two matches. Check if #1 is exact, if not return #0
-                    return InjectorCriteria.exactMatch(matchingCriteria[1], requestCriteria) ? matchingCriteria[1]
-                                                                                             : matchingCriteria[0];
+                    return InjectorCriteria.exactMatch(matchingCriteria[1], requestCriteria) ? providerList[criteriaList.indexOf(matchingCriteria[1])]
+                                                                                             : providerList[criteriaList.indexOf(matchingCriteria[0])];
 
                 default: //Should never happen!
                     throw new Error("Internal error! We should only ever have zero, one, or two matching rules!");

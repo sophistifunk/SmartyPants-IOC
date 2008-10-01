@@ -54,7 +54,7 @@ package net.expantra.smartypants.utils
 
         public static function filterMembersByMetadataName(memberDescriptions : XMLListCollection, metadataName : String) : XMLListCollection
         {
-            return memberDescriptions.(descendant("metadata").(attribute("name") == metadataName));
+            return new XMLListCollection(memberDescriptions.source.(descendants("metadata").(attribute("name") == metadataName).length() > 0));
         }
 
         /**

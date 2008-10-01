@@ -8,6 +8,9 @@ package net.expantra.smartypants
 
     use namespace sp_internal;
 
+    /**
+    * The main entry-point to the API
+    */
 	public class SmartyPants
 	{
         /**

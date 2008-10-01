@@ -189,9 +189,6 @@ package net.expantra.smartypants.impl.live
         {
             log.debug("Updating listeners for " + magicValue);
 
-
-            throw("UPDATE THIS CODE!");
-
             try
             {
                 var destination : Object;
@@ -199,11 +196,12 @@ package net.expantra.smartypants.impl.live
 
                 for (destination in destinations)
                 {
-                    entry = destinations[destination];
-
-                    if (entry.magicValue == magicValue)
+                    for each (entry in destinations[destination])
                     {
-                        destination[entry.propertyKey] = provider ? provider.getInstance() : newValue;
+                        if (entry.magicValue == magicValue)
+                        {
+                            destination[entry.propertyKey] = provider ? provider.getInstance() : newValue;
+                        }
                     }
                 }
             }
