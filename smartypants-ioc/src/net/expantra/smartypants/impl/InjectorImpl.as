@@ -42,6 +42,18 @@ package net.expantra.smartypants.impl
 
         //--------------------------------------------------------------------------
         //
+        //  Constructor
+        //
+        //--------------------------------------------------------------------------
+
+        public function InjectorImpl()
+        {
+        	super();
+        	InjectorRegistry.injectorCreated(this);
+        }
+
+        //--------------------------------------------------------------------------
+        //
         //  Public API
         //
         //--------------------------------------------------------------------------
@@ -137,7 +149,7 @@ package net.expantra.smartypants.impl
                 if (injectionType == "")
                     injectionType = null;
 
-                log.debug("Attempting to inject into " + fieldName + ", which is a " + fieldType
+                log.debug("Attempting to find a value for the field named " + fieldName + ", which is a " + fieldType
                           + ". injectionType = " + injectionType + ", injectionName = " + injectionName);
 
                 //Get a reference to the injected class type
@@ -160,7 +172,11 @@ package net.expantra.smartypants.impl
 
                 var valueToInject : Object = null;
 
-                if (liveInjection)
+                if (actualClassToInject == Injector || actualClassToInject == InjectorImpl) //Request for the injector itself?
+                {
+                    valueToInject = this;
+                }
+                else if (liveInjection)
                 {
                     log.debug("This is a live injection");
 
@@ -193,6 +209,8 @@ package net.expantra.smartypants.impl
 
                 //Set the field.
 
+                log.debug("Attempting to set the field named " + fieldName + ", which is a " + fieldType
+                          + ". injectionType = " + injectionType + ", injectionName = " + injectionName);
                 log.debug("valueToInject = " + valueToInject);
 
                 targetInstance[fieldName] = valueToInject;
@@ -265,7 +283,9 @@ package net.expantra.smartypants.impl
 
             try
             {
+            	log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
                 instance = instantiate(request.forClass);
+                log.debug("Instantated, attempting to inject into the new instance.");
                 injectInto(instance);
             }
             catch (e : Error)

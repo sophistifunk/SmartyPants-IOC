@@ -2,19 +2,20 @@
 <flexLibProperties version="1">
 <includeClasses>
 <classEntry path="net.expantra.smartypants.impl.InjectorRegistry"/>
-<classEntry path="net.expantra.smartypants.utils.LoggingUtil"/>
 <classEntry path="net.expantra.smartypants.impl.live.SourceEntry"/>
+<classEntry path="net.expantra.smartypants.utils.LoggingUtil"/>
 <classEntry path="net.expantra.smartypants.utils.SingleFrameFlags"/>
 <classEntry path="net.expantra.smartypants.InjectorRequest"/>
 <classEntry path="net.expantra.smartypants.sp_injector"/>
-<classEntry path="net.expantra.smartypants.impl.live.Helpers"/>
 <classEntry path="net.expantra.smartypants.impl.SimpleProvider"/>
-<classEntry path="net.expantra.smartypants.Provider"/>
+<classEntry path="net.expantra.smartypants.impl.live.Helpers"/>
 <classEntry path="net.expantra.smartypants.impl.FactoryProvider"/>
+<classEntry path="net.expantra.smartypants.Provider"/>
 <classEntry path="net.expantra.smartypants.SmartyPants"/>
 <classEntry path="net.expantra.smartypants.impl.live.LiveProvider"/>
-<classEntry path="net.expantra.smartypants.InjectorRule"/>
 <classEntry path="net.expantra.smartypants.impl.live.LiveInjectionManager"/>
+<classEntry path="net.expantra.smartypants.InjectorRule"/>
+<classEntry path="net.expantra.smartypants.RequestInjection"/>
 <classEntry path="net.expantra.smartypants.impl.RequestImpl"/>
 <classEntry path="net.expantra.smartypants.impl.InjectorImpl"/>
 <classEntry path="net.expantra.smartypants.impl.SingletonProvider"/>
@@ -24,5 +25,7 @@
 <classEntry path="net.expantra.smartypants.impl.live.DestinationEntry"/>
 </includeClasses>
 <includeResources/>
-<namespaceManifests/>
+<namespaceManifests>
+<namespaceManifestEntry manifest="manifest.xml" namespace="http://net.expantra.smartypants/2008"/>
+</namespaceManifests>
 </flexLibProperties>

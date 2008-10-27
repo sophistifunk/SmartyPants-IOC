@@ -25,7 +25,8 @@ package net.expantra.smartypants.impl
         {
             if (!instance)
             {
-                instance = injector.newRequest().forClass(impl).getInstance();
+                instance = injector.instantiate(impl);
+                injector.injectInto(instance);
             }
 
             return instance;

@@ -68,18 +68,18 @@ package net.expantra.smartypants.impl
             injector.bindProvider(new SingletonProvider(implementingClass), new InjectorCriteria(clazz, name));
         }
 
-        public function useRuleFor(clazz : Class, named : String = null) : void
+        public function useRuleFor(existingRuleClass : Class, existingRuleName : String = null) : void
         {
             //First we get our intermediary provider, by way of which we achieve this magic :)
             var provider : Provider;
 
-            if (named)
+            if (existingRuleName)
             {
-                provider = injector.newRequest().forClass(clazz).named(named).getProvider();
+                provider = injector.newRequest().forClass(existingRuleClass).named(existingRuleName).getProvider();
             }
             else
             {
-                provider = injector.newRequest().forClass(clazz).getProvider();
+                provider = injector.newRequest().forClass(existingRuleClass).getProvider();
             }
 
             //Now bind this rule, to that new provider!

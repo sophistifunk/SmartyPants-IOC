@@ -21,7 +21,7 @@ package net.expantra.smartypants
         public static function locateInjectorFor(instance : Object) : Injector
         {
             //See if we've already injected this object
-            if (InjectorRegistry.alreadyInjected(instance))
+            if (InjectorRegistry.hasInjector(instance))
                 return InjectorRegistry.getInjectorFor(instance);
 
             //If not, we'll next try travelling up the display tree (to make it easier to inject into MXML objects)
@@ -41,7 +41,7 @@ package net.expantra.smartypants
             var result : Injector = locateInjectorFor(instance);
 
             if (!result)
-                throw new Error("Could not find an injector.");
+                throw new Error("Could not find an injector for " + instance);
 
             return result;
         }
@@ -51,12 +51,15 @@ package net.expantra.smartypants
         */
         public static function getOrCreateInjectorFor(instance : Object) : Injector
         {
-            var result : Injector = locateInjectorFor(instance);
+            var injector : Injector = locateInjectorFor(instance);
 
-            if (result)
-                return result;
+            if (!injector)
+            {
+                injector = new InjectorImpl();
+                InjectorRegistry.registerAssociation(injector as InjectorImpl, instance); //Ties the injector to the instance without requiring actual injection
+            }
 
-            return new InjectorImpl();
+            return injector;
         }
 
         /**

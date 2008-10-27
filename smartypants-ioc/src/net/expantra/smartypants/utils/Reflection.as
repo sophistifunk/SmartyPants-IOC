@@ -81,7 +81,7 @@ package net.expantra.smartypants.utils
         {
             return "@uri" in propertyDescription ?
                    new QName(propertyDescription.@uri, propertyDescription.@name) :
-                   propertyDescription.@name;
+                   String(propertyDescription.@name);
         }
 
         /**
@@ -149,6 +149,9 @@ package net.expantra.smartypants.utils
             {
                 throw new Error("The parameter classOrClassName must be a valid Class instance or fully qualified class name.");
             }
+
+            if (classOrClassName == superclass)
+                return true;
 
             var factoryDescription : XML = DescribeTypeCache.describeType(classOrClassName).typeDescription.factory[0];
 
