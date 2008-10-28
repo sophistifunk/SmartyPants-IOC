@@ -107,8 +107,8 @@ package net.expantra.smartypants.impl
         */
         private function injectValuesIntoFields(targetInstance : Object) : void
         {
-            var writeableProperties : XMLListCollection = Reflection.getWriteablePropertyDescriptions(targetInstance);
-            var injectionPointList : XMLListCollection = Reflection.filterMembersByMetadataName(writeableProperties, "Inject");
+            var writeableProperties : XMLList = Reflection.getWriteablePropertyDescriptions(targetInstance);
+            var injectionPointList : XMLList = Reflection.filterMembersByMetadataName(writeableProperties, "Inject");
 
             log.debug("The instance " + targetInstance + " has " + injectionPointList.length + " injection points.");
 
@@ -222,11 +222,11 @@ package net.expantra.smartypants.impl
         */
         private function injectIntoExistingMembers(parentInstance : Object) : void
         {
-            var readableProperties : XMLListCollection = Reflection.getReadablePropertyDescriptions(parentInstance);
+            var readableProperties : XMLList = Reflection.getReadablePropertyDescriptions(parentInstance);
 
             //Simple [InjectInto] for instances
 
-            var injectIntoTargets : XMLListCollection = Reflection.filterMembersByMetadataName(readableProperties, "InjectInto");
+            var injectIntoTargets : XMLList = Reflection.filterMembersByMetadataName(readableProperties, "InjectInto");
 
             var fieldDescription : XML;
 
@@ -269,6 +269,8 @@ package net.expantra.smartypants.impl
         {
             //Do we have a rule that matches our criteria?
             var provider : Provider = lookupProviderForCriteria(request);
+
+            log.debug("requested: {0}, provider is {1}", request, provider);
 
             if (provider)
                 return provider.getInstance();

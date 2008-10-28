@@ -3,58 +3,37 @@ package net.expantra.smartypants.utils
     import flash.utils.getDefinitionByName;
     import flash.utils.getQualifiedClassName;
 
-    import mx.collections.XMLListCollection;
     import mx.utils.DescribeTypeCache;
 
+    /**
+     * Reflection utils. todo: Better documentation is required here before 1.0!
+     *
+     * @author josh@gfunk007.com
+     *
+     */
     public class Reflection
     {
         /**
          * Returns a list of all variables and all writeable accessors. These are nodes from describeType()
          */
-        public static function getWriteablePropertyDescriptions(instance : *) : XMLListCollection
+        public static function getWriteablePropertyDescriptions(instance : *) : XMLList
         {
-            var xml : XML = DescribeTypeCache.describeType(instance).typeDescription;
-
-            var resultList : XMLListCollection;
-            var node : XML;
-
-            resultList = new XMLListCollection(xml..accessor.(@access != "readonly"));
-
-            var tmp : XMLList = xml..variable;
-
-            for each (node in tmp)
-            {
-                resultList.addItem(node);
-            }
-
-            return resultList;
+        	var description : XML = DescribeTypeCache.describeType(instance).typeDescription;
+        	return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "readonly"));
         }
 
         /**
          * Returns a list of all variables and all readable accessors. These are nodes from describeType()
          */
-        public static function getReadablePropertyDescriptions(instance : *) : XMLListCollection
+        public static function getReadablePropertyDescriptions(instance : *) : XMLList
         {
-            var xml : XML = DescribeTypeCache.describeType(instance).typeDescription;
-
-            var resultList : XMLListCollection;
-            var node : XML;
-
-            resultList = new XMLListCollection(xml..accessor.(@access != "writeonly"));
-
-            var tmp : XMLList = xml..variable;
-
-            for each (node in tmp)
-            {
-                resultList.addItem(node);
-            }
-
-            return resultList;
+            var description : XML = DescribeTypeCache.describeType(instance).typeDescription;
+            return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "writeonly"));
         }
 
-        public static function filterMembersByMetadataName(memberDescriptions : XMLListCollection, metadataName : String) : XMLListCollection
+        public static function filterMembersByMetadataName(memberDescriptions : XMLList, metadataName : String) : XMLList
         {
-            return new XMLListCollection(memberDescriptions.source.(descendants("metadata").(attribute("name") == metadataName).length() > 0));
+            return memberDescriptions.(descendants("metadata").(attribute("name") == metadataName).length() > 0);
         }
 
         /**
@@ -75,7 +54,7 @@ package net.expantra.smartypants.utils
         }
 
         /**
-        * Given a property description node, returns the name or qname required to index it using []
+        * Given a property description node, returns the String name or qname required to index it using []
         */
         public static function getPropertyName(propertyDescription : XML) : *
         {
@@ -104,26 +83,29 @@ package net.expantra.smartypants.utils
         }
 
         /**
-        * Filters metadata on key and value. If only one of key or value parameters is non-null, filters only on that field
+        * Given a list of metadata descriptions, returns all that have a matching key and/or value argument combination
+        *
+        * @param key the key to match for. If null, matches on value only
+        * @param value the value to match for. If null, matches on key only
         */
         public static function filterMetadataByArguments(input : XMLList, key : String = null, value : String = null) : XMLList
         {
-            if (!key && !value)
-            {
-                return input;
-            }
+            var result : XMLList = input;
 
             if (key && !value)
             {
-               return input.(arg.(@key == key));
+               result = input.(child("arg").(attribute("key") == key).length() > 0);
             }
-
-            if (value && !key)
+            else if (value && !key)
             {
-                return input.(arg.(@value == value));
+                result = input.(child("arg").(attribute("value") == value).length() > 0);
+            }
+            else if (value && key)
+            {
+                result = input.(child("arg").(attribute("key") == key && attribute("value") == value).length() > 0);
             }
 
-            return input.(arg.(@key == key && @value == value));
+            return result;
         }
 
         /**
