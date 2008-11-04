@@ -33,6 +33,11 @@ package net.expantra.smartypants
         function useSingletonOf(implementingClass : Class) : void;
 
         /**
+         * A shortcut: whenAskedFor(Foo).useSingleton() is the same as whenAskedFor(Foo).useSingletonOf(Foo)
+         */
+        function useSingleton() : void;
+
+        /**
          * Binds to an existing rule
          */
         function useRuleFor(clazz : Class, named : String = null) : void;

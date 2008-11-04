@@ -68,6 +68,11 @@ package net.expantra.smartypants.impl
             injector.bindProvider(new SingletonProvider(implementingClass), new InjectorCriteria(clazz, name));
         }
 
+        public function useSingleton() : void
+        {
+        	useSingletonOf(clazz);
+        }
+
         public function useRuleFor(existingRuleClass : Class, existingRuleName : String = null) : void
         {
             //First we get our intermediary provider, by way of which we achieve this magic :)
