@@ -277,7 +277,7 @@ package net.expantra.smartypants.impl
 
             //No rule matching our request. If there's a name in the request, then we have a fault!
             if (request.forName)
-                throw new Error("Could not fulfil the request " + request);
+                throw new Error("There is no injector rule for a " + request);
 
             //We have a valid unbound request for an instance. Attempt to create it!
 
@@ -292,7 +292,8 @@ package net.expantra.smartypants.impl
             }
             catch (e : Error)
             {
-                throw new Error("Could not fulfil the request " + request + " due to " + e + "\n" + e.getStackTrace());
+            	log.error("Could not fulfil the request for {0} due to {1} at {2}", request, e, e.getStackTrace());
+                throw new Error("Could not fulfil the request for " + request + " due to " + e + "\n" + e.getStackTrace());
             }
 
             return instance;

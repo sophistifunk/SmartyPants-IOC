@@ -1,5 +1,7 @@
 package net.expantra.smartypants
 {
+	import flash.utils.getQualifiedClassName;
+
     /**
      * Simply a type-safe package for rule / request criteria
      */
@@ -24,7 +26,8 @@ package net.expantra.smartypants
 
         public function toString() : String
         {
-        	return "InjectorCriteria(forClass = " + forClass + ", forName = " + forName + ")";
+        	return (forClass != null ? getQualifiedClassName(forClass) : "unspecified class") +
+        	       (forName != null ? " named \"" + forName + "\"" : " with no name");
         }
 
         /**
