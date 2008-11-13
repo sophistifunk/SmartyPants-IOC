@@ -13,18 +13,18 @@ package net.expantra.smartypants.utils
      */
     public class Reflection
     {
-    	/**
-    	 * Part of our reimpl of DescribeTypeCache
-    	 */
-    	private static var typeCache : Object = {};
+        /**
+         * Part of our reimpl of DescribeTypeCache
+         */
+        private static var typeCache : Object = {};
 
         /**
          * Returns a list of all variables and all writeable accessors. These are nodes from describeType()
          */
         public static function getWriteablePropertyDescriptions(instance : *) : XMLList
         {
-        	var description : XML = sp_describeType(instance).typeDescription;
-        	return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "readonly"));
+            var description : XML = sp_describeType(instance).typeDescription;
+            return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "readonly"));
         }
 
         /**
@@ -162,36 +162,36 @@ package net.expantra.smartypants.utils
          *
          */
         public static function sp_describeType(o : *) : DescribeTypeCacheRecord
-	    {
-	        var className : String;
-	        var cacheKey : String;
+        {
+            var className : String;
+            var cacheKey : String;
 
-	        if (o is String)
-	            cacheKey = className = o;
-	        else
-	            cacheKey = className = getQualifiedClassName(o);
+            if (o is String)
+                cacheKey = className = o;
+            else
+                cacheKey = className = getQualifiedClassName(o);
 
-	        //Need separate entries for describeType(Foo) and describeType(myFoo)
+            //Need separate entries for describeType(Foo) and describeType(myFoo)
             if(o is Class)
-	            cacheKey += "$";
+                cacheKey += "$";
 
-	        if (cacheKey in typeCache)
-	        {
-	            return typeCache[cacheKey];
-	        }
-	        else
-	        {
-	            if (o is String)
-	                o = getDefinitionByName(o);
+            if (cacheKey in typeCache)
+            {
+                return typeCache[cacheKey];
+            }
+            else
+            {
+                if (o is String)
+                    o = getDefinitionByName(o);
 
-	            var typeDescription : XML = flash.utils.describeType(o);
-	            var record : DescribeTypeCacheRecord = new DescribeTypeCacheRecord();
-	            record.typeDescription = typeDescription;
-	            record.typeName = className;
-	            typeCache[cacheKey] = record;
+                var typeDescription : XML = flash.utils.describeType(o);
+                var record : DescribeTypeCacheRecord = new DescribeTypeCacheRecord();
+                record.typeDescription = typeDescription;
+                record.typeName = className;
+                typeCache[cacheKey] = record;
 
-	            return record;
-	        }
-	    }
+                return record;
+            }
+        }
     }
 }
