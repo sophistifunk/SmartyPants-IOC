@@ -1,9 +1,9 @@
 package net.expantra.smartypants.utils
 {
+    import flash.utils.describeType;
     import flash.utils.getDefinitionByName;
     import flash.utils.getQualifiedClassName;
-
-    import mx.utils.DescribeTypeCache;
+    import mx.utils.DescribeTypeCacheRecord;
 
     /**
      * Reflection utils. todo: Better documentation is required here before 1.0!
@@ -13,12 +13,17 @@ package net.expantra.smartypants.utils
      */
     public class Reflection
     {
+    	/**
+    	 * Part of our reimpl of DescribeTypeCache
+    	 */
+    	private static var typeCache : Object = {};
+
         /**
          * Returns a list of all variables and all writeable accessors. These are nodes from describeType()
          */
         public static function getWriteablePropertyDescriptions(instance : *) : XMLList
         {
-        	var description : XML = DescribeTypeCache.describeType(instance).typeDescription;
+        	var description : XML = sp_describeType(instance).typeDescription;
         	return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "readonly"));
         }
 
@@ -27,7 +32,7 @@ package net.expantra.smartypants.utils
          */
         public static function getReadablePropertyDescriptions(instance : *) : XMLList
         {
-            var description : XML = DescribeTypeCache.describeType(instance).typeDescription;
+            var description : XML = sp_describeType(instance).typeDescription;
             return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "writeonly"));
         }
 
@@ -115,11 +120,20 @@ package net.expantra.smartypants.utils
         {
             var superclassName : String = getQualifiedClassName(superclass);
 
-            if (classOrClassName is String)
+            var actualClass : Class;
+
+            if (classOrClassName == "fundsmanagement.ui.model::ReconciliationsViewModel")
+                trace("delete this line it's for a breakpoint only");
+
+            if (classOrClassName is Class)
+            {
+                actualClass = Class(classOrClassName);
+            }
+            else if (classOrClassName is String)
             {
                 try
                 {
-                    classOrClassName = getDefinitionByName(classOrClassName);
+                    actualClass = Class(getDefinitionByName(classOrClassName));
                 }
                 catch (e : Error)
                 {
@@ -127,17 +141,57 @@ package net.expantra.smartypants.utils
                 }
             }
 
-            if (!(classOrClassName is Class))
+            if (!actualClass)
             {
                 throw new Error("The parameter classOrClassName must be a valid Class instance or fully qualified class name.");
             }
 
-            if (classOrClassName == superclass)
+            if (actualClass == superclass)
                 return true;
 
-            var factoryDescription : XML = DescribeTypeCache.describeType(classOrClassName).typeDescription.factory[0];
+            var factoryDescription : XML = sp_describeType(actualClass).typeDescription.factory[0];
 
             return (factoryDescription.children().(name() == "implementsInterface" || name() == "extendsClass").(attribute("type") == superclassName).length() > 0)
         }
+
+        /**
+         * Reimplements mx.utils.DescribeTypeCache because of https://bugs.adobe.com/jira/browse/SDK-18073
+         * I'll pull it when it's no-longer needed. Might be a while :)
+         * @param o
+         * @return
+         *
+         */
+        public static function sp_describeType(o : *) : DescribeTypeCacheRecord
+	    {
+	        var className : String;
+	        var cacheKey : String;
+
+	        if (o is String)
+	            cacheKey = className = o;
+	        else
+	            cacheKey = className = getQualifiedClassName(o);
+
+	        //Need separate entries for describeType(Foo) and describeType(myFoo)
+            if(o is Class)
+	            cacheKey += "$";
+
+	        if (cacheKey in typeCache)
+	        {
+	            return typeCache[cacheKey];
+	        }
+	        else
+	        {
+	            if (o is String)
+	                o = getDefinitionByName(o);
+
+	            var typeDescription : XML = flash.utils.describeType(o);
+	            var record : DescribeTypeCacheRecord = new DescribeTypeCacheRecord();
+	            record.typeDescription = typeDescription;
+	            record.typeName = className;
+	            typeCache[cacheKey] = record;
+
+	            return record;
+	        }
+	    }
     }
 }
