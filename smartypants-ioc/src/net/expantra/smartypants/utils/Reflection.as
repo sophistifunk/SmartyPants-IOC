@@ -122,9 +122,6 @@ package net.expantra.smartypants.utils
 
             var actualClass : Class;
 
-            if (classOrClassName == "fundsmanagement.ui.model::ReconciliationsViewModel")
-                trace("delete this line it's for a breakpoint only");
-
             if (classOrClassName is Class)
             {
                 actualClass = Class(classOrClassName);
