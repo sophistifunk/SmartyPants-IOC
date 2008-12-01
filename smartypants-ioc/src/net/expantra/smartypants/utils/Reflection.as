@@ -3,6 +3,7 @@ package net.expantra.smartypants.utils
     import flash.utils.describeType;
     import flash.utils.getDefinitionByName;
     import flash.utils.getQualifiedClassName;
+
     import mx.utils.DescribeTypeCacheRecord;
 
     /**
@@ -149,6 +150,16 @@ package net.expantra.smartypants.utils
             var factoryDescription : XML = sp_describeType(actualClass).typeDescription.factory[0];
 
             return (factoryDescription.children().(name() == "implementsInterface" || name() == "extendsClass").(attribute("type") == superclassName).length() > 0)
+        }
+
+        public static function getClassMetadata(clazz : Class, metadataName : String = null) : XMLList
+        {
+            var classMetaData = sp_describeType(clazz).typeDescription.factory.metadata;
+
+            if (metadataName)
+                return classMetaData.(@name == metadataName);
+
+            return classMetaData;
         }
 
         /**

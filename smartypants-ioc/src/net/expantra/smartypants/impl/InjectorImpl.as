@@ -3,7 +3,6 @@ package net.expantra.smartypants.impl
     import flash.events.IEventDispatcher;
     import flash.utils.getDefinitionByName;
 
-    import mx.collections.XMLListCollection;
     import mx.logging.ILogger;
 
     import net.expantra.smartypants.Injector;
@@ -110,7 +109,7 @@ package net.expantra.smartypants.impl
             var writeableProperties : XMLList = Reflection.getWriteablePropertyDescriptions(targetInstance);
             var injectionPointList : XMLList = Reflection.filterMembersByMetadataName(writeableProperties, "Inject");
 
-            log.debug("The instance " + targetInstance + " has " + injectionPointList.length + " injection points.");
+            log.debug("The object ({0}) has {1} injection points.", targetInstance, injectionPointList.length());
 
             var injectionPoint : XML;
             for each(injectionPoint in injectionPointList)
@@ -270,7 +269,7 @@ package net.expantra.smartypants.impl
             //Do we have a rule that matches our criteria?
             var provider : Provider = lookupProviderForCriteria(request);
 
-            log.debug("requested: {0}, provider is {1}", request, provider);
+            log.debug("requested: {0}, existing provider is {1}", request, provider ? provider : "not found");
 
             if (provider)
                 return provider.getInstance();
@@ -286,8 +285,19 @@ package net.expantra.smartypants.impl
             try
             {
             	log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
+
+                //Step 1. Instantiate it
                 instance = instantiate(request.forClass);
-                log.debug("Instantated, attempting to inject into the new instance.");
+
+                //Step 2. Check to see if it's marked [Singleton] - if so, create a rule for future lookups
+                if (Reflection.getClassMetadata(request.forClass, "Singleton").length() > 0)
+                {
+                	log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
+                    newRule().whenAskedFor(request.forClass).useInstance(instance);
+                }
+
+                //Step 3. Make sure to populate our newly created instance with whatever it needs
+                log.debug("A {0} was Instantated, attempting to inject into the new instance.", request.forClass);
                 injectInto(instance);
             }
             catch (e : Error)
