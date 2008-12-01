@@ -21,7 +21,7 @@ package net.expantra.smartypants
 
         private function cc(event : FlexEvent) : void
         {
-            var injector : Injector = SmartyPants.getInjectorFor(event.target);
+            var injector : Injector = SmartyPants.getOrCreateInjectorFor(event.target);
             injector.injectInto(event.target);
         }
     }
