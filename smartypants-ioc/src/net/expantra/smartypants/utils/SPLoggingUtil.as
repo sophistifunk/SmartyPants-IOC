@@ -7,7 +7,7 @@ package net.expantra.smartypants.utils
 	import mx.logging.LogEventLevel;
 	import mx.logging.targets.TraceTarget;
 
-	public class LoggingUtil
+	public class SPLoggingUtil
 	{
         private static const badLogNameChars : RegExp = /[\[\]\~\$\^\&\\(\)\{\}\+\?\/=`!@#%,:;'"<>\s]+/g;
 

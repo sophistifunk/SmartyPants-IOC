@@ -152,9 +152,16 @@ package net.expantra.smartypants.utils
             return (factoryDescription.children().(name() == "implementsInterface" || name() == "extendsClass").(attribute("type") == superclassName).length() > 0)
         }
 
+        /**
+         * Gets class-level metadata nodes from a class at runtime.
+         * @param clazz the class to introspect
+         * @param metadataName an optional filter. If specified, will only return metadata nodes of that name, if null will return all class-level metadata
+         * @return
+         *
+         */
         public static function getClassMetadata(clazz : Class, metadataName : String = null) : XMLList
         {
-            var classMetaData = sp_describeType(clazz).typeDescription.factory.metadata;
+            var classMetaData : XMLList = sp_describeType(clazz).typeDescription.factory.metadata;
 
             if (metadataName)
                 return classMetaData.(@name == metadataName);

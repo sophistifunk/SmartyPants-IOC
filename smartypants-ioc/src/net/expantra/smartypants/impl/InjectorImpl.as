@@ -11,14 +11,14 @@ package net.expantra.smartypants.impl
     import net.expantra.smartypants.InjectorRule;
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.impl.live.LiveInjectionManager;
-    import net.expantra.smartypants.utils.LoggingUtil;
+    import net.expantra.smartypants.utils.SPLoggingUtil;
     import net.expantra.smartypants.utils.Reflection;
 
     use namespace sp_internal;
 
     public class InjectorImpl implements Injector
     {
-        private var log : ILogger = LoggingUtil.getDefaultLogger(this);
+        private var log : ILogger = SPLoggingUtil.getDefaultLogger(this);
 
         //--------------------------------------------------------------------------
         //

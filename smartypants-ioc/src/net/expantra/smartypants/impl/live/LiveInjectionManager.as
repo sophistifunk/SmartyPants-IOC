@@ -10,7 +10,7 @@ package net.expantra.smartypants.impl.live
     import net.expantra.smartypants.InjectorCriteria;
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.impl.sp_internal;
-    import net.expantra.smartypants.utils.LoggingUtil;
+    import net.expantra.smartypants.utils.SPLoggingUtil;
     import net.expantra.smartypants.utils.SingleFrameFlags;
     use namespace sp_internal;
 
@@ -19,7 +19,7 @@ package net.expantra.smartypants.impl.live
     */
     public class LiveInjectionManager
     {
-        private var log : ILogger = LoggingUtil.getDefaultLogger(this);
+        private var log : ILogger = SPLoggingUtil.getDefaultLogger(this);
 
         //--------------------------------------------------------------------------
         //

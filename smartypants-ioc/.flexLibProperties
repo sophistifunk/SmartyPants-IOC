@@ -3,7 +3,7 @@
 <includeClasses>
 <classEntry path="net.expantra.smartypants.impl.InjectorRegistry"/>
 <classEntry path="net.expantra.smartypants.impl.live.SourceEntry"/>
-<classEntry path="net.expantra.smartypants.utils.LoggingUtil"/>
+<classEntry path="net.expantra.smartypants.utils.SPLoggingUtil"/>
 <classEntry path="net.expantra.smartypants.utils.SingleFrameFlags"/>
 <classEntry path="net.expantra.smartypants.InjectorRequest"/>
 <classEntry path="net.expantra.smartypants.sp_injector"/>

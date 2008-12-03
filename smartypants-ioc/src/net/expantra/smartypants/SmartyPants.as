@@ -2,6 +2,8 @@ package net.expantra.smartypants
 {
 	import flash.display.DisplayObject;
 
+	import mx.core.Application;
+
 	import net.expantra.smartypants.impl.InjectorImpl;
 	import net.expantra.smartypants.impl.InjectorRegistry;
 	import net.expantra.smartypants.impl.sp_internal;
@@ -27,6 +29,10 @@ package net.expantra.smartypants
             //If not, we'll next try travelling up the display tree (to make it easier to inject into MXML objects)
             if (instance is DisplayObject && instance.parent)
                 return locateInjectorFor(instance.parent);
+
+            //See if there's one floating around for Application.application.
+            if (InjectorRegistry.hasInjector(Application.application))
+                return InjectorRegistry.getInjectorFor(Application.application);
 
             return null;
         }
