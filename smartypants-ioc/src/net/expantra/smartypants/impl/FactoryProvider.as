@@ -27,7 +27,7 @@ package net.expantra.smartypants.impl
         public function getInstance() : *
         {
             //Create
-            var instance : Object = injector.newRequest().forClass(impl).getInstance();
+            var instance : Object = injector.instantiate(impl);
 
             //Inject. Note that injector.instantiate will not inject fields, nor into member instances.
             injector.injectInto(instance);
