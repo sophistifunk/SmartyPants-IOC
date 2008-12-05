@@ -2,21 +2,20 @@ package net.expantra.smartypants.impl
 {
     import flash.utils.Dictionary;
 
-    import mx.automation.codec.AssetPropertyCodec;
-
     public class InjectorRegistry
     {
-        private static var idSeed : Number = 111;
+        private static const ID_SEED_SEED : Number = 123;
+        private static var idSeed : Number = ID_SEED_SEED;
 
-        private static const allInjectors : Dictionary = new Dictionary(true);
+        private const allInjectors : Dictionary = new Dictionary(true);
 
         //Objects that have been injected into
-        private static const allInjectees : Dictionary = new Dictionary(true);
+        private const allInjectees : Dictionary = new Dictionary(true);
 
         //Objects that have an associated injector (may not have been injected yet though)
-        private static const allAssociatedObjects : Dictionary = new Dictionary(true);
+        private const allAssociatedObjects : Dictionary = new Dictionary(true);
 
-        private static function getInjectorId(injector : InjectorImpl) : Number
+        private function getInjectorId(injector : InjectorImpl) : Number
         {
             for (var testee : * in allInjectors)
             {
@@ -31,7 +30,7 @@ package net.expantra.smartypants.impl
             return idSeed;
         }
 
-        private static function getInjectorIdForInstance(instance : Object) : Number
+        private function getInjectorIdForInstance(instance : Object) : Number
         {
             if (instance in allAssociatedObjects)
                 return allAssociatedObjects[instance];
@@ -42,7 +41,7 @@ package net.expantra.smartypants.impl
         /**
         * Register the injector <-> injectee relationship (and flag the injection as having begun)
         */
-        sp_internal static function registerInjection(injector : InjectorImpl, injectee : Object) : void
+        sp_internal function registerInjection(injector : InjectorImpl, injectee : Object) : void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
             allInjectees[injectee] = getInjectorId(injector);
@@ -51,7 +50,7 @@ package net.expantra.smartypants.impl
         /**
         * Register the injector <-> associated objecy relationship (does not flag the injection as having begun)
         */
-        sp_internal static function registerAssociation(injector : InjectorImpl, injectee : Object) : void
+        sp_internal function registerAssociation(injector : InjectorImpl, injectee : Object) : void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
         }
@@ -59,7 +58,7 @@ package net.expantra.smartypants.impl
         /**
         * Has the instance been injected into?
         */
-        sp_internal static function alreadyInjected(instance : Object) : Boolean
+        sp_internal function alreadyInjected(instance : Object) : Boolean
         {
             return instance in allInjectees;
         }
@@ -67,7 +66,7 @@ package net.expantra.smartypants.impl
         /**
         * Has the instance been associated with an injector?
         */
-        sp_internal static function hasInjector(instance : Object) : Boolean
+        sp_internal function hasInjector(instance : Object) : Boolean
         {
             return (instance in allInjectees) || (instance in allAssociatedObjects);
         }
@@ -77,7 +76,7 @@ package net.expantra.smartypants.impl
         *
         * @return The InjectorImpl responsible, or null if not found.
         */
-        sp_internal static function getInjectorFor(instance : Object) : InjectorImpl
+        sp_internal function getInjectorFor(instance : Object) : InjectorImpl
         {
             var id : Number = getInjectorIdForInstance(instance);
 
@@ -99,9 +98,50 @@ package net.expantra.smartypants.impl
          * Notify the registry about the creation of an injector
          * @param instance
          */
-        sp_internal static function injectorCreated(instance : InjectorImpl) : void
+        sp_internal function injectorCreated(instance : InjectorImpl) : void
         {
             getInjectorId(instance);
+        }
+
+        sp_internal function get status() : String
+        {
+            var injectorCount : Number = 0;
+            var injecteeCount : Number = 0;
+            var assosciateCount : Number = 0;
+
+            var minId : Number = Number.MAX_VALUE;
+            var maxId : Number = Number.MIN_VALUE;
+
+            for (var obj : * in allInjectors)
+            {
+                injectorCount++;
+                minId = Math.min(minId, allInjectors[obj]);
+                maxId = Math.max(maxId, allInjectors[obj]);
+            }
+
+            for (obj in allInjectees)
+            {
+                injecteeCount++;
+                minId = Math.min(minId, allInjectees[obj]);
+                maxId = Math.max(maxId, allInjectees[obj]);
+            }
+
+            for (obj in allAssociatedObjects)
+            {
+                assosciateCount++;
+                minId = Math.min(minId, allAssociatedObjects[obj]);
+                maxId = Math.max(maxId, allAssociatedObjects[obj]);
+            }
+
+            if (injectorCount == 0)
+                return "This registry counts 0 injectors";
+
+            if (injectorCount == 1)
+                return "This registry counts 1 injector with " + injecteeCount + " injectees, and "
+                   + assosciateCount + " associated Objects. Injector Id is " + minId
+
+            return "This registry counts " + injectorCount + " injectors, " + injecteeCount + " injectees, and "
+                   + assosciateCount + " associated Objects. Injector Ids range from " + minId + " to " + maxId;
         }
     }
 }

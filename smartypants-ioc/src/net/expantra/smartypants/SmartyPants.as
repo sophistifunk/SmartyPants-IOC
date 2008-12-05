@@ -15,6 +15,16 @@ package net.expantra.smartypants
     */
 	public class SmartyPants
 	{
+		private static var _registry : InjectorRegistry;
+
+		public static function get injectorRegistry() : InjectorRegistry
+		{
+			if (!_registry)
+				_registry = new InjectorRegistry();
+
+			return _registry;
+		}
+
         /**
         * Looks for an injector for a specified instance
         *
@@ -23,16 +33,16 @@ package net.expantra.smartypants
         public static function locateInjectorFor(instance : Object) : Injector
         {
             //See if we've already injected this object
-            if (InjectorRegistry.hasInjector(instance))
-                return InjectorRegistry.getInjectorFor(instance);
+            if (injectorRegistry.hasInjector(instance))
+                return injectorRegistry.getInjectorFor(instance);
 
             //If not, we'll next try travelling up the display tree (to make it easier to inject into MXML objects)
             if (instance is DisplayObject && instance.parent)
                 return locateInjectorFor(instance.parent);
 
             //See if there's one floating around for Application.application.
-            if (InjectorRegistry.hasInjector(Application.application))
-                return InjectorRegistry.getInjectorFor(Application.application);
+            if (injectorRegistry.hasInjector(Application.application))
+                return injectorRegistry.getInjectorFor(Application.application);
 
             return null;
         }
@@ -62,7 +72,7 @@ package net.expantra.smartypants
             if (!injector)
             {
                 injector = new InjectorImpl();
-                InjectorRegistry.registerAssociation(injector as InjectorImpl, instance); //Ties the injector to the instance without requiring actual injection
+                injectorRegistry.registerAssociation(injector as InjectorImpl, instance); //Ties the injector to the instance without requiring actual injection
             }
 
             return injector;
@@ -74,6 +84,11 @@ package net.expantra.smartypants
         public static function injectInto(instance : Object) : void
         {
         	getOrCreateInjectorFor(instance).injectInto(instance);
+        }
+
+        public static function get status() : String
+        {
+        	return injectorRegistry.status;
         }
 	}
 }

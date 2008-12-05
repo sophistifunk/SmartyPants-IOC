@@ -9,6 +9,7 @@
 </compiler>
 <applications>
 <application path="SmartyPantsIOC.as"/>
+<application path="SmartyPantsTestApplication.mxml"/>
 </applications>
 <modules/>
 <buildCSSFiles/>

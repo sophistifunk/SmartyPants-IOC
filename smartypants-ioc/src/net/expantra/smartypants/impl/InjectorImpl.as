@@ -10,9 +10,10 @@ package net.expantra.smartypants.impl
     import net.expantra.smartypants.InjectorRequest;
     import net.expantra.smartypants.InjectorRule;
     import net.expantra.smartypants.Provider;
+    import net.expantra.smartypants.SmartyPants;
     import net.expantra.smartypants.impl.live.LiveInjectionManager;
-    import net.expantra.smartypants.utils.SPLoggingUtil;
     import net.expantra.smartypants.utils.Reflection;
+    import net.expantra.smartypants.utils.SPLoggingUtil;
 
     use namespace sp_internal;
 
@@ -48,7 +49,7 @@ package net.expantra.smartypants.impl
         public function InjectorImpl()
         {
         	super();
-        	InjectorRegistry.injectorCreated(this);
+        	SmartyPants.injectorRegistry.injectorCreated(this);
         }
 
         //--------------------------------------------------------------------------
@@ -89,10 +90,10 @@ package net.expantra.smartypants.impl
             if (targetInstance == null || targetInstance is Date || Reflection.isSimpleType(targetInstance))
                 return;
 
-            if (InjectorRegistry.alreadyInjected(targetInstance))
+            if (SmartyPants.injectorRegistry.alreadyInjected(targetInstance))
                 return;
 
-            InjectorRegistry.registerInjection(this, targetInstance);
+            SmartyPants.injectorRegistry.registerInjection(this, targetInstance);
 
             //Regular injection
             injectValuesIntoFields(targetInstance);
