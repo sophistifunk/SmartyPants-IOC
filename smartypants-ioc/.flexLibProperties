@@ -26,7 +26,6 @@
 <classEntry path="net.expantra.smartypants.sp_injector"/>
 <classEntry path="net.expantra.smartypants.utils.Reflection"/>
 <classEntry path="net.expantra.smartypants.utils.SPLoggingUtil"/>
-<classEntry path="net.expantra.smartypants.utils.SingleFrameFlags"/>
 </includeClasses>
 <includeResources/>
 <namespaceManifests>

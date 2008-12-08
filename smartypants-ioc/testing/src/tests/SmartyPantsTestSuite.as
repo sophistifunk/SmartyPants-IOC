@@ -8,12 +8,14 @@ package tests
 
     import mx.containers.Panel;
     import mx.controls.Button;
+    import mx.core.Application;
 
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.SmartyPants;
     import net.expantra.smartypants.impl.InjectorImpl;
 
+    import tests.support.Host;
     import tests.support.Injectee;
     import tests.support.SingletonClass;
 
@@ -180,5 +182,32 @@ package tests
             assertTrue("injectee.injector must be the injector", injectee.injector === injector);
         }
 
+        public function testLiveBindings() : void
+        {
+            const fooValue : String = "Foo Value " + Math.floor(Math.random() * 99999);
+            const fooValue2 : String = "Foo Value2 " + Math.floor(Math.random() * 99999);
+            const fooValue3 : String = "Foo Value3 " + Math.floor(Math.random() * 99999);
+
+            injector.newRule().whenAskedFor(String).named("foo").useInstance(fooValue);
+            var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
+
+            assertNull("String1 should be null initially", injectee.l1);
+            assertNull("String2 should be null initially", injectee.l2);
+
+            var host : Host = new Host();
+
+            injector.newRule().whenAskedFor(String).named("live1").useInstance(fooValue2);
+
+            assertEquals("Value should be updated", fooValue2, injectee.l1);
+
+            injector.newRule().whenAskedFor(String).named("live2").useBindableProperty(host, "string1");
+            assertNull("String2 should still be null", injectee.l2);
+
+            host.string1 = fooValue3;
+            assertEquals("Value should be foo3", fooValue3, injectee.l2);
+
+            host.string1 = fooValue2;
+            assertEquals("Value should be foo2", fooValue2, injectee.l2);
+        }
     }
 }

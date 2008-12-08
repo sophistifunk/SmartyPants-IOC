@@ -18,5 +18,11 @@ package tests.support
 
         [Inject(type="String", name="foo")]
         public var stringNamedFooProvider : Provider;
+
+        [Inject(name="live1", live)]
+        public var l1 : String;
+
+        [Inject(name="live2", live)]
+        public var l2 : String;
     }
 }

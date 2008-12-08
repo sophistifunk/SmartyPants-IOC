@@ -11,7 +11,6 @@ package net.expantra.smartypants.impl.live
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.impl.sp_internal;
     import net.expantra.smartypants.utils.SPLoggingUtil;
-    import net.expantra.smartypants.utils.SingleFrameFlags;
     use namespace sp_internal;
 
     /**
@@ -222,15 +221,6 @@ package net.expantra.smartypants.impl.live
 
             if (!magicValue || magicValue.length == 0)
                 return;
-
-            //Make sure we only bother about this once per frame. On a long chain,
-            //or for something with many bindale events it may get called many
-            //times per magicvalue per frame, and we don't wanna waste time!
-
-            if (SingleFrameFlags.flagIsSet(magicValue))
-                return;
-
-            SingleFrameFlags.setFlag(magicValue);
 
             log.debug("Received notice that " + magicValue + " has updated!");
 
