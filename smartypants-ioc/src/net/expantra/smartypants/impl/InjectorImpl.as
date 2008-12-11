@@ -2,6 +2,7 @@ package net.expantra.smartypants.impl
 {
     import flash.events.IEventDispatcher;
     import flash.utils.getDefinitionByName;
+    import flash.utils.getQualifiedClassName;
 
     import mx.logging.ILogger;
 
@@ -95,11 +96,19 @@ package net.expantra.smartypants.impl
 
             SmartyPants.injectorRegistry.registerInjection(this, targetInstance);
 
-            //Regular injection
-            injectValuesIntoFields(targetInstance);
+            try
+            {
+                //Regular injection
+                injectValuesIntoFields(targetInstance);
 
-            //Find any [InjectInto] decorations to inject into non-injected values.
-            injectIntoExistingMembers(targetInstance);
+                //Find any [InjectInto] decorations to inject into non-injected values.
+                injectIntoExistingMembers(targetInstance);
+            }
+            catch (e : Error)
+            {
+                log.error("{0} {1}", e, e.getStackTrace());
+                throw new Error("Could not inject dependencies into an instance of " + getQualifiedClassName(targetInstance) + " because of " + e);
+            }
         }
 
         /**
@@ -162,7 +171,7 @@ package net.expantra.smartypants.impl
                 }
                 catch (e : Error)
                 {
-                    throw new Error("Could not lookup the class " + (injectionType ? injectionType : fieldType)
+                    throw new Error("While trying to inject the value for the field named \"" + fieldName + "\", I could not lookup the class " + (injectionType ? injectionType : fieldType)
                                     + ", due to " + e + "\n" + e.getStackTrace());
                 }
 
