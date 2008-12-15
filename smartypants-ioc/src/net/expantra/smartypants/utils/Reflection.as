@@ -37,9 +37,28 @@ package net.expantra.smartypants.utils
             return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") != "writeonly"));
         }
 
+        /**
+         * Returns only members that have the specified metadata
+         * @param memberDescriptions
+         * @param metadataName
+         * @return
+         *
+         */
         public static function filterMembersByMetadataName(memberDescriptions : XMLList, metadataName : String) : XMLList
         {
             return memberDescriptions.(descendants("metadata").(attribute("name") == metadataName).length() > 0);
+        }
+
+        /**
+         * Finds functions. Will not find statics if passed a Class.
+         * @param instanceOrClass
+         * @return
+         *
+         */
+        public static function getFunctions(instanceOrClass : Object) : XMLList
+        {
+            var desc : XML = sp_describeType(instanceOrClass).typeDescription;
+            return instanceOrClass is Class ? desc.factory.method : desc.method;
         }
 
         /**

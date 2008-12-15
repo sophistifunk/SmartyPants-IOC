@@ -109,6 +109,30 @@ package net.expantra.smartypants.impl
                 log.error("{0} {1}", e, e.getStackTrace());
                 throw new Error("Could not inject dependencies into an instance of " + getQualifiedClassName(targetInstance) + " because of " + e);
             }
+
+            try
+            {
+                findAndExecutePostConstruct(targetInstance);
+            }
+            catch (e : Error)
+            {
+                log.error("{0} {1}", e, e.getStackTrace());
+                throw new Error("Could not execute [PostConstruct] function on a " + getQualifiedClassName(targetInstance) + " because of " + e);
+            }
+        }
+
+        private function findAndExecutePostConstruct(injectee : Object) : void
+        {
+            var functionsToExecute : XMLList = Reflection.filterMembersByMetadataName(Reflection.getFunctions(injectee), "PostConstruct");
+
+            log.debug("Injectee {0} has {1} [PostConstruct] function(s)", injectee, functionsToExecute.length());
+
+            for each (var functionNode : XML in functionsToExecute)
+            {
+                var functionName : String = String(functionNode.@name);
+                log.debug("Found [PostConstruct] method {0}, about to invoke", functionName);
+                injectee[functionName](this);
+            }
         }
 
         /**

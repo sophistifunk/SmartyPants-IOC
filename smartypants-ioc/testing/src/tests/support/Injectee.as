@@ -24,5 +24,16 @@ package tests.support
 
         [Inject(name="live2", live)]
         public var l2 : String;
+
+        public var setupWasCalled : Boolean = false;
+
+        public var setupInjector : Injector;
+
+        [PostConstruct]
+        public function setup(injector : Injector) : void
+        {
+            setupWasCalled = true;
+            setupInjector = injector;
+        }
     }
 }

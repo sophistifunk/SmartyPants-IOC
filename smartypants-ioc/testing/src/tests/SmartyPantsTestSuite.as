@@ -209,5 +209,14 @@ package tests
             host.string1 = fooValue2;
             assertEquals("Value should be foo2", fooValue2, injectee.l2);
         }
+
+        public function testPostConstruct() : void
+        {
+            injector.newRule().whenAskedFor(String).named("foo").useInstance("fooValue");
+            var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
+
+            assertTrue("PostConstruct function was not called", injectee.setupWasCalled);
+            assertEquals("Wrong injector value passed to injectee.setup()", injector, injectee.setupInjector);
+        }
     }
 }
