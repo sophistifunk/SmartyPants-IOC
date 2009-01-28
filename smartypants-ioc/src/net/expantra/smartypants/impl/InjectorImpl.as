@@ -9,9 +9,9 @@ package net.expantra.smartypants.impl
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.InjectorCriteria;
     import net.expantra.smartypants.InjectorRequest;
-    import net.expantra.smartypants.InjectorRule;
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.SmartyPants;
+    import net.expantra.smartypants.dsl.InjectorRuleRoot;
     import net.expantra.smartypants.impl.live.LiveInjectionManager;
     import net.expantra.smartypants.utils.Reflection;
     import net.expantra.smartypants.utils.SPLoggingUtil;
@@ -70,7 +70,7 @@ package net.expantra.smartypants.impl
         /**
          * Create an InjectorRule
          */
-        public function newRule() : InjectorRule
+        public function newRule() : InjectorRuleRoot
         {
             return new RuleImpl(this);
         }

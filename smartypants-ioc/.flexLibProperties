@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <flexLibProperties version="1">
 <includeClasses>
-<classEntry path="net.expantra.smartypants.Injector"/>
 <classEntry path="net.expantra.smartypants.InjectorCriteria"/>
-<classEntry path="net.expantra.smartypants.InjectorRequest"/>
-<classEntry path="net.expantra.smartypants.InjectorRule"/>
-<classEntry path="net.expantra.smartypants.Provider"/>
-<classEntry path="net.expantra.smartypants.RequestInjection"/>
-<classEntry path="net.expantra.smartypants.SmartyPants"/>
-<classEntry path="net.expantra.smartypants.impl.FactoryProvider"/>
-<classEntry path="net.expantra.smartypants.impl.InjectorImpl"/>
-<classEntry path="net.expantra.smartypants.impl.InjectorRegistry"/>
-<classEntry path="net.expantra.smartypants.impl.InstanceProvider"/>
-<classEntry path="net.expantra.smartypants.impl.RequestImpl"/>
-<classEntry path="net.expantra.smartypants.impl.RuleImpl"/>
-<classEntry path="net.expantra.smartypants.impl.SimpleProvider"/>
-<classEntry path="net.expantra.smartypants.impl.SingletonProvider"/>
-<classEntry path="net.expantra.smartypants.impl.live.DestinationEntry"/>
 <classEntry path="net.expantra.smartypants.impl.live.Helpers"/>
-<classEntry path="net.expantra.smartypants.impl.live.LiveInjectionManager"/>
+<classEntry path="net.expantra.smartypants.SmartyPants"/>
 <classEntry path="net.expantra.smartypants.impl.live.LiveInjectionUpdatedEvent"/>
-<classEntry path="net.expantra.smartypants.impl.live.LiveProvider"/>
-<classEntry path="net.expantra.smartypants.impl.live.SourceEntry"/>
-<classEntry path="net.expantra.smartypants.impl.sp_internal"/>
-<classEntry path="net.expantra.smartypants.sp_injector"/>
-<classEntry path="net.expantra.smartypants.utils.Reflection"/>
+<classEntry path="net.expantra.smartypants.impl.live.LiveInjectionManager"/>
+<classEntry path="net.expantra.smartypants.impl.RequestImpl"/>
+<classEntry path="net.expantra.smartypants.RequestInjection"/>
 <classEntry path="net.expantra.smartypants.utils.SPLoggingUtil"/>
+<classEntry path="net.expantra.smartypants.impl.SingletonProvider"/>
+<classEntry path="net.expantra.smartypants.impl.InstanceProvider"/>
+<classEntry path="net.expantra.smartypants.Injector"/>
+<classEntry path="net.expantra.smartypants.impl.sp_internal"/>
+<classEntry path="net.expantra.smartypants.impl.InjectorRegistry"/>
+<classEntry path="net.expantra.smartypants.impl.live.SourceEntry"/>
+<classEntry path="net.expantra.smartypants.InjectorRequest"/>
+<classEntry path="net.expantra.smartypants.sp_injector"/>
+<classEntry path="net.expantra.smartypants.impl.SimpleProvider"/>
+<classEntry path="net.expantra.smartypants.impl.FactoryProvider"/>
+<classEntry path="net.expantra.smartypants.Provider"/>
+<classEntry path="net.expantra.smartypants.impl.live.LiveProvider"/>
+<classEntry path="net.expantra.smartypants.impl.InjectorImpl"/>
+<classEntry path="net.expantra.smartypants.impl.RuleImpl"/>
+<classEntry path="net.expantra.smartypants.utils.Reflection"/>
+<classEntry path="net.expantra.smartypants.impl.live.DestinationEntry"/>
 </includeClasses>
 <includeResources/>
 <namespaceManifests>

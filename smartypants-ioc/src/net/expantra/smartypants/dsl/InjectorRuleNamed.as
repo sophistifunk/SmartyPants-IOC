@@ -1,22 +1,11 @@
-package net.expantra.smartypants
+package net.expantra.smartypants.dsl
 {
-	import flash.events.IEventDispatcher;
+    import flash.events.IEventDispatcher;
 
-    public interface InjectorRule
+    import net.expantra.smartypants.Provider;
+
+    public interface InjectorRuleNamed
     {
-        /**
-         * Adds a name to the criteria.
-         *
-         * @parameter name A name to add to the criteria. Null (or not called) means "when no name is specified in the request",
-         * "*" means "when any or no name is specified in the request". You may have named rules, with a fallback rule named "*".
-         */
-        function named(name : String) : InjectorRule;
-
-        /**
-        * Adds a target class to the criteria. Currently required
-        */
-        function whenAskedFor(clazz : Class) : InjectorRule;
-
         /**
          * Binds an implementor
          */

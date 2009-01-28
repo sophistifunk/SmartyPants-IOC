@@ -4,12 +4,14 @@ package net.expantra.smartypants.impl
 	import flash.utils.getQualifiedClassName;
 
 	import net.expantra.smartypants.InjectorCriteria;
-	import net.expantra.smartypants.InjectorRule;
 	import net.expantra.smartypants.Provider;
+	import net.expantra.smartypants.dsl.InjectorRuleNamed;
+	import net.expantra.smartypants.dsl.InjectorRuleRoot;
+	import net.expantra.smartypants.dsl.InjectorRuleUnNamed;
 
     use namespace sp_internal;
 
-	internal class RuleImpl implements InjectorRule
+	internal class RuleImpl implements InjectorRuleUnNamed, InjectorRuleRoot
 	{
         private var injector : InjectorImpl;
         private var name : String;
@@ -20,13 +22,13 @@ package net.expantra.smartypants.impl
             this.injector = injector;
         }
 
-        public function named(name : String) : InjectorRule
+        public function named(name : String) : InjectorRuleNamed
         {
             this.name = name;
             return this;
         }
 
-        public function whenAskedFor(clazz : Class) : InjectorRule
+        public function whenAskedFor(clazz : Class) : InjectorRuleUnNamed
         {
             this.clazz = clazz;
             return this;
