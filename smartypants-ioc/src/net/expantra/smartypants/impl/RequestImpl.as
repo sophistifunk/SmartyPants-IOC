@@ -3,12 +3,14 @@ package net.expantra.smartypants.impl
 	import flash.utils.getQualifiedClassName;
 
 	import net.expantra.smartypants.InjectorCriteria;
-	import net.expantra.smartypants.InjectorRequest;
 	import net.expantra.smartypants.Provider;
+	import net.expantra.smartypants.dsl.InjectorRequestNamed;
+	import net.expantra.smartypants.dsl.InjectorRequestRoot;
+	import net.expantra.smartypants.dsl.InjectorRequestUnNamed;
 
     use namespace sp_internal;
 
-	internal class RequestImpl implements InjectorRequest
+	internal class RequestImpl implements InjectorRequestRoot, InjectorRequestUnNamed
 	{
         //--------------------------------------------------------------------------
         //
@@ -37,7 +39,7 @@ package net.expantra.smartypants.impl
         //
         //--------------------------------------------------------------------------
 
-        public function forClass(clazz : Class) : InjectorRequest
+        public function forClass(clazz : Class) : InjectorRequestUnNamed
         {
             _forClass = clazz;
             return this;
@@ -46,7 +48,7 @@ package net.expantra.smartypants.impl
         /**
         * Include a name in the query
         */
-        public function named(name : String) : InjectorRequest
+        public function named(name : String) : InjectorRequestNamed
         {
             _forName = name;
             return this;

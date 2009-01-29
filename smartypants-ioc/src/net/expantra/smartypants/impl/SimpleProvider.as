@@ -1,13 +1,13 @@
 package net.expantra.smartypants.impl
 {
-	import net.expantra.smartypants.InjectorRequest;
 	import net.expantra.smartypants.Provider;
+	import net.expantra.smartypants.dsl.InjectorRequestNamed;
 
 	public class SimpleProvider implements Provider
 	{
-        private var request : InjectorRequest;
+        private var request : InjectorRequestNamed;
 
-        public function SimpleProvider(request : InjectorRequest)
+        public function SimpleProvider(request : InjectorRequestNamed)
         {
             this.request = request;
         }

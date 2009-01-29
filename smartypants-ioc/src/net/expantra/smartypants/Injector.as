@@ -1,5 +1,6 @@
 package net.expantra.smartypants
 {
+    import net.expantra.smartypants.dsl.InjectorRequestRoot;
     import net.expantra.smartypants.dsl.InjectorRuleRoot;
 
     public interface Injector
@@ -7,7 +8,7 @@ package net.expantra.smartypants
         /**
          * Create an InjectorRequest.
          */
-        function newRequest() : InjectorRequest;
+        function newRequest() : InjectorRequestRoot;
 
         /**
          * Create an InjectorRule

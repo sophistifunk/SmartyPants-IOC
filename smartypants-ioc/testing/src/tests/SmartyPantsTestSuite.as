@@ -3,12 +3,12 @@ package tests
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.events.IEventDispatcher;
+    import flash.system.System;
 
     import flexunit.framework.TestCase;
 
     import mx.containers.Panel;
     import mx.controls.Button;
-    import mx.core.Application;
 
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.Provider;
@@ -68,7 +68,8 @@ package tests
 
         override public function tearDown() : void
         {
-            injector = null;
+            injector = undefined;
+            System.gc();
 
             trace("Teardown Complete: Status is", SmartyPants.status);
             trace("---- End Test ----");
