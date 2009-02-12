@@ -38,6 +38,15 @@ package net.expantra.smartypants.utils
         }
 
         /**
+         * Returns a list of all variables and all readable-writeable accessors. These are nodes from describeType()
+         */
+        public static function getReadWritePropertyDescriptions(instance : *) : XMLList
+        {
+            var description : XML = sp_describeType(instance).typeDescription;
+            return description.descendants().(name() == "variable" || (name() == "accessor" && attribute("access") == "readwrite"));
+        }
+
+        /**
          * Returns only members that have the specified metadata
          * @param memberDescriptions
          * @param metadataName
