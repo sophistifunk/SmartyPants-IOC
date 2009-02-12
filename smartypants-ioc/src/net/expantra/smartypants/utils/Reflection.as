@@ -198,6 +198,55 @@ package net.expantra.smartypants.utils
         }
 
         /**
+         * Returns the content of [ArrayElementType("fully.qualified.name")] as Class. Throws an error if the definition can not be resolved in the context.
+         * @param instanceOrClass
+         * @param fieldName
+         * @return an instance of Class, or null if no [ArrayElementType] annotation was found
+         *
+         */
+        public static function getArrayElementType(instanceOrClass : Object, fieldName : String) : Class
+        {
+            var propertyDescription : XML = getPropertyDescription(instanceOrClass, fieldName);
+
+            var aetMetadata : XMLList = getMetaDataNodes(propertyDescription, "ArrayElementType");
+
+            if (aetMetadata.length() == 0)
+                return null;
+
+            try
+            {
+                return getDefinitionByName(aetMetadata.child("arg").attribute("value")[0]) as Class;
+            }
+            catch (e : Error)
+            {
+                if (e.toString().indexOf("Error #1065:") >= 0)
+                {
+                    throw new Error("The type \"" + (aetMetadata.child("arg").attribute("value")[0]) + "\" was listed as" +
+                                    " [ArrayElementType()] for " + getQualifiedClassName(instanceOrClass) + "." + fieldName +
+                                    " but could not be found at run time. Make sure it is correctly spelled, fully-qualified, and being compiled.");
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+
+            throw "This is just here to please the compiler";
+        }
+
+        /**
+         * Retrieve a property description by name
+         * @param instanceOrClass
+         * @param fieldName
+         * @return
+         *
+         */
+        public static function getPropertyDescription(instanceOrClass : Object, fieldName : String) : XML
+        {
+            return sp_describeType(instanceOrClass).typeDescription..*.((name() == "variable" || name() == "accessor") && attribute("name") == fieldName)[0];
+        }
+
+        /**
          * Reimplements mx.utils.DescribeTypeCache because of https://bugs.adobe.com/jira/browse/SDK-18073
          * I'll pull it when it's no-longer needed. Might be a while :)
          * @param o
@@ -215,7 +264,7 @@ package net.expantra.smartypants.utils
                 cacheKey = className = getQualifiedClassName(o);
 
             //Need separate entries for describeType(Foo) and describeType(myFoo)
-            if(o is Class)
+            if(o is Class || o is String)
                 cacheKey += "$";
 
             if (cacheKey in typeCache)
