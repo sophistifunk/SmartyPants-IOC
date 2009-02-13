@@ -15,21 +15,17 @@ package net.expantra.smartypants
     */
 	public class SmartyPants
 	{
-		private static var _registry : InjectorRegistry;
-
-		public static function get injectorRegistry() : InjectorRegistry
-		{
-			if (!_registry)
-				_registry = new InjectorRegistry();
-
-			return _registry;
-		}
+        //--------------------------------------------------------------------------
+        //
+        //  Public API
+        //
+        //--------------------------------------------------------------------------
 
         /**
-        * Looks for an injector for a specified instance
-        *
-        * @return the Injector that SmartyPants thinks should handle this object, or null if none was found
-        */
+         * Looks for an injector for a specified instance
+         *
+         * @return the Injector that SmartyPants thinks should handle this object, or null if none was found
+         */
         public static function locateInjectorFor(instance : Object) : Injector
         {
             //See if we've already injected this object
@@ -48,10 +44,10 @@ package net.expantra.smartypants
         }
 
         /**
-        * Looks for an injector for a specified instance
-        *
-        * @return the Injector that SmartyPants thinks should handle this object, or throws an error if none found (fail-fast)
-        */
+         * Looks for an injector for a specified instance
+         *
+         * @return the Injector that SmartyPants thinks should handle this object, or throws an error if none found (fail-fast)
+         */
         public static function getInjectorFor(instance : Object) : Injector
         {
             var result : Injector = locateInjectorFor(instance);
@@ -63,8 +59,8 @@ package net.expantra.smartypants
         }
 
         /**
-        * Looks for an injector for a specified instance, or will create one if a suitable injector can't be found
-        */
+         * Looks for an injector for a specified instance, or will create one if a suitable injector can't be found
+         */
         public static function getOrCreateInjectorFor(instance : Object) : Injector
         {
             var injector : Injector = locateInjectorFor(instance);
@@ -79,14 +75,38 @@ package net.expantra.smartypants
         }
 
         /**
-        * Looks up or creates an injector, then calls injector.injectInto(). Good for injecting into components on CREATION_COMPLETE
-        */
+         * Looks up or creates an injector, then calls injector.injectInto(). Good for injecting into components on CREATION_COMPLETE
+         */
         public static function injectInto(instance : Object) : void
         {
         	getOrCreateInjectorFor(instance).injectInto(instance);
         }
 
-        public static function get status() : String
+        //--------------------------------------------------------------------------
+        //
+        //  Single-injector public API
+        //
+        //--------------------------------------------------------------------------
+
+        private var singleInjectorMode : Boolean = true;
+
+        //--------------------------------------------------------------------------
+        //
+        //  Internal API
+        //
+        //--------------------------------------------------------------------------
+
+        private static var _registry : InjectorRegistry;
+
+        sp_internal static function get injectorRegistry() : InjectorRegistry
+        {
+            if (!_registry)
+                _registry = new InjectorRegistry();
+
+            return _registry;
+        }
+
+        sp_internal static function get status() : String
         {
         	return injectorRegistry.status;
         }

@@ -39,8 +39,9 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Register the injector <-> injectee relationship (and flag the injection as having begun)
-        */
+         * @private
+         * Register the injector <-> injectee relationship (and flag the injection as having begun)
+         */
         sp_internal function registerInjection(injector : InjectorImpl, injectee : Object) : void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
@@ -48,34 +49,38 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Register the injector <-> associated objecy relationship (does not flag the injection as having begun)
-        */
+         * @private
+         * Register the injector <-> associated object relationship (does not flag the injection as having begun)
+         */
         sp_internal function registerAssociation(injector : InjectorImpl, injectee : Object) : void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
         }
 
         /**
-        * Has the instance been injected into?
-        */
+         * @private
+         * Has the instance been injected into?
+         */
         sp_internal function alreadyInjected(instance : Object) : Boolean
         {
             return instance in allInjectees;
         }
 
         /**
-        * Has the instance been associated with an injector?
-        */
+         * @private
+         * Has the instance been associated with an injector?
+         */
         sp_internal function hasInjector(instance : Object) : Boolean
         {
             return (instance in allInjectees) || (instance in allAssociatedObjects);
         }
 
         /**
-        * Lookup the injector instance for a specific object (if it has been injected into)
-        *
-        * @return The InjectorImpl responsible, or null if not found.
-        */
+         * @private
+         * Lookup the injector instance for a specific object (if it has been injected into)
+         *
+         * @return The InjectorImpl responsible, or null if not found.
+         */
         sp_internal function getInjectorFor(instance : Object) : InjectorImpl
         {
             var id : Number = getInjectorIdForInstance(instance);
@@ -95,6 +100,7 @@ package net.expantra.smartypants.impl
         }
 
         /**
+         * @private
          * Notify the registry about the creation of an injector
          * @param instance
          */
@@ -103,6 +109,12 @@ package net.expantra.smartypants.impl
             getInjectorId(instance);
         }
 
+        /**
+         * @private
+         * Produces some debugging information, used by the test suite.
+         * @return
+         *
+         */
         sp_internal function get status() : String
         {
             var injectorCount : Number = 0;
