@@ -14,10 +14,12 @@ package tests
     import net.expantra.smartypants.Provider;
     import net.expantra.smartypants.SmartyPants;
     import net.expantra.smartypants.impl.InjectorImpl;
+    import net.expantra.smartypants.impl.sp_internal;
 
     import tests.support.Host;
     import tests.support.Injectee;
     import tests.support.SingletonClass;
+    use namespace sp_internal;
 
     public class SmartyPantsTestSuite extends TestCase implements IEventDispatcher
     {
@@ -63,6 +65,7 @@ package tests
             trace();
             trace("---- Begin Test ----");
             trace("Test begin: Status is", SmartyPants.status);
+            SmartyPants.singleInjectorMode = true; //Return to the default
             injector = new InjectorImpl();
         }
 
@@ -126,8 +129,10 @@ package tests
             assertFalse("instances should not be equal!", instance3 == instance4);
         }
 
-        public function testNoRegisteredInjectorForThis() : void
+        public function testMultipleInjectorMode() : void
         {
+            SmartyPants.singleInjectorMode = false;
+
         	var registeredInjector : Injector = SmartyPants.locateInjectorFor(this);
 
         	assertNull("There should not be a registered injector for this class", registeredInjector);
@@ -141,6 +146,17 @@ package tests
         	{
         		//Pass
         	}
+        }
+
+        public function testSingleInjectorMode() : void
+        {
+            var injector : Injector = SmartyPants.locateInjectorFor(this);
+
+            assertNotNull("There be a 'registered' injector for this class", injector);
+
+            injector = SmartyPants.getInjectorFor(this);
+
+            assertNotNull("There be a fetchable injector for this class", injector);
         }
 
         public function testFailureWhenRequestByNameWithoutMatchingRule() : void

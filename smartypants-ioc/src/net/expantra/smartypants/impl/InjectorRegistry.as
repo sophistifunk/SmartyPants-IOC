@@ -155,5 +155,20 @@ package net.expantra.smartypants.impl
             return "This registry counts " + injectorCount + " injectors, " + injecteeCount + " injectees, and "
                    + assosciateCount + " associated Objects. Injector Ids range from " + minId + " to " + maxId;
         }
+
+        /**
+         * How many injectors exist?
+         */
+        sp_internal function get numberOfInjectors() : Number
+        {
+            var injectorCount : Number = 0;
+
+            for (var obj : * in allInjectors)
+            {
+                injectorCount++;
+            }
+
+            return injectorCount;
+        }
     }
 }

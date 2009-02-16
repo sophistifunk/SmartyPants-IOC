@@ -4,6 +4,8 @@ package net.expantra.smartypants
 
 	import mx.core.Application;
 
+	import net.expantra.smartypants.dsl.InjectorRequestUnNamed;
+	import net.expantra.smartypants.dsl.InjectorRuleUnNamed;
 	import net.expantra.smartypants.impl.InjectorImpl;
 	import net.expantra.smartypants.impl.InjectorRegistry;
 	import net.expantra.smartypants.impl.sp_internal;
@@ -28,6 +30,9 @@ package net.expantra.smartypants
          */
         public static function locateInjectorFor(instance : Object) : Injector
         {
+            if (singleInjectorMode)
+                return singleInjector;
+
             //See if we've already injected this object
             if (injectorRegistry.hasInjector(instance))
                 return injectorRegistry.getInjectorFor(instance);
@@ -88,7 +93,67 @@ package net.expantra.smartypants
         //
         //--------------------------------------------------------------------------
 
-        private var singleInjectorMode : Boolean = true;
+        private static var _singleInjectorMode : Boolean = true;
+        private static var _singleInjector : Injector;
+
+        /**
+         * Controls the single-injector mode. Single-injector mode is the default behaviour.
+         */
+        public static function set singleInjectorMode(value : Boolean) : void
+        {
+            if (value == _singleInjectorMode)
+                return;
+
+            //We can't go back to single-injector mode if there's multiple injectors referenced at the moment!
+            if (value == true && injectorRegistry.numberOfInjectors > 1)
+            {
+                throw new Error("Cannot return to single-injector mode if multiple injectors exist: " + injectorRegistry.status);
+            }
+
+            _singleInjectorMode = value;
+        }
+
+        public static function get singleInjectorMode() : Boolean
+        {
+            return _singleInjectorMode;
+        }
+
+        private static function get singleInjector() : Injector
+        {
+            if (!singleInjectorMode)
+                return null;
+
+            if (!_singleInjector)
+                _singleInjector = new InjectorImpl();
+
+            return _singleInjector;
+        }
+
+        /**
+         * Register a new rule. Requires SmartyPants to be in single-injector mode (the default behaviour)
+         * @param requestedClass
+         * @return
+         */
+        public static function whenAskedFor(requestedClass : Class) : InjectorRuleUnNamed
+        {
+            if (!singleInjector)
+                throw new Error("SmartyPants.whenAskedFor() requires SmartyPants-IOC to be in single-injector mode");
+
+            return singleInjector.newRule().whenAskedFor(requestedClass);
+        }
+
+        /**
+         * Make a request. Requires SmartyPants to be in single-injector mode (the default behaviour)
+         * @param requestedClass
+         * @return
+         */
+        public static function forClass(requestedClass : Class) : InjectorRequestUnNamed
+        {
+            if (!singleInjector)
+                throw new Error("SmartyPants.forClass() requires SmartyPants-IOC to be in single-injector mode");
+
+            return singleInjector.newRequest().forClass(requestedClass);
+        }
 
         //--------------------------------------------------------------------------
         //
