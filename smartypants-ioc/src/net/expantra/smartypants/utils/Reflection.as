@@ -247,6 +247,16 @@ package net.expantra.smartypants.utils
         }
 
         /**
+         * Determines whether a Class object represents an ActionScript interface or a concrete class
+         * @param clazz
+         * @return
+         */
+        public static function isInterface(clazz : Class) : Boolean
+        {
+            return sp_describeType(clazz).typeDescription.factory.extendsClass.length() == 0;
+        }
+
+        /**
          * Reimplements mx.utils.DescribeTypeCache because of https://bugs.adobe.com/jira/browse/SDK-18073
          * I'll pull it when it's no-longer needed. Might be a while :)
          * @param o

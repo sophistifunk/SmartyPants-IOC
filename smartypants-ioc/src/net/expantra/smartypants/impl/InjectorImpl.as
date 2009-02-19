@@ -316,6 +316,13 @@ package net.expantra.smartypants.impl
 
             var instance : Object = null;
 
+            if (Reflection.isInterface(request.forClass))
+            {
+                var errorMessage : String = "Could not fulfil the request for " + request + " because it is an interface and no rule was found to construct it.";
+                log.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+
             try
             {
             	log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
