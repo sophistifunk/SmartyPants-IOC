@@ -34,22 +34,30 @@ package net.expantra.smartypants.impl
             return this;
         }
 
+        [Deprecated(replacement="useValue")]
         /**
-        * Sets a binding
+        * Sets a value binding
+        * @private - deprecated
         */
         public function useInstance(instance : Object) : void
         {
-            injector.bindInstance(instance, new InjectorCriteria(clazz, name));
+            useValue(instance);
+        }
+
+        /**
+        * Sets a value binding
+        */
+        public function useValue(value : Object) : void
+        {
+            injector.bindInstance(value, new InjectorCriteria(clazz, name));
         }
 
         /**
         * Sets a class -> impl binding
-        *
-        * TODO : implement proper scopes a-la guice? Will we ever really need that though?
         */
         public function useClass(implementingClass : Class) : void
         {
-            injector.bindImpl(implementingClass, new InjectorCriteria(clazz, name));
+            useRuleFor(implementingClass);
         }
 
         public function useProvider(provider : Provider) : void

@@ -334,7 +334,7 @@ package net.expantra.smartypants.impl
                 if (Reflection.getClassMetadata(request.forClass, "Singleton").length() > 0)
                 {
                 	log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
-                    newRule().whenAskedFor(request.forClass).useInstance(instance);
+                    newRule().whenAskedFor(request.forClass).useValue(instance);
                 }
 
                 //Step 3. Make sure to populate our newly created instance with whatever it needs
@@ -442,13 +442,13 @@ package net.expantra.smartypants.impl
             bindProvider(provider, criteria);
         }
 
-        /**
-        * Bind to an implementing class (or subclass, if the criteria class is a proper class rather than an interface)
-        */
-        sp_internal function bindImpl(implementingClass : Class, criteria : InjectorCriteria) : void
-        {
-            bindProvider(new FactoryProvider(implementingClass), criteria);
-        }
+//        /**
+//        * Bind to an implementing class or subclass, if the criteria class is a proper class rather than an interface
+//        */
+//        sp_internal function bindImpl(implementingClass : Class, criteria : InjectorCriteria) : void
+//        {
+//            bindProvider(new FactoryProvider(implementingClass), criteria);
+//        }
 
         /**
         * Performs actual instantiation - This is where we'll be doing our constructor injection soon!
