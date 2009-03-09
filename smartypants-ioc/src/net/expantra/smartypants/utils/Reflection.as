@@ -126,15 +126,15 @@ package net.expantra.smartypants.utils
         {
             var result : XMLList = input;
 
-            if (key && !value)
+            if (key != null && value == null)
             {
                result = input.(child("arg").(attribute("key") == key).length() > 0);
             }
-            else if (value && !key)
+            else if (value != null && key == null)
             {
                 result = input.(child("arg").(attribute("value") == value).length() > 0);
             }
-            else if (value && key)
+            else if (value != null && key != null)
             {
                 result = input.(child("arg").(attribute("key") == key && attribute("value") == value).length() > 0);
             }
