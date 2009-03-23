@@ -104,29 +104,41 @@ package tests
             assertTrue("provider must return same instance also", instance1 === provider.getInstance());
         }
 
-        public function testSingletonAnnotationIsIgnoredWhenRulePresent() : void
+        public function testCantBindFooToFoo() : void
         {
-            injector.newRule().whenAskedFor(SingletonClass).useClass(SingletonClass);
+            try
+            {
+                injector.newRule().whenAskedFor(SingletonClass).useClass(SingletonClass);
+                fail("Should not be able to bind SingletonClass to itself");
+            }
+            catch (expected : Error)
+            {
+                //...
+            }
 
             var instance1 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
             var instance2 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
 
-            assertFalse("instances should not be equal!", instance1 == instance2);
+            assertTrue("instances should be equal!", instance1 == instance2);
         }
 
         public function testSingletonAnnotationIsIgnoredWhenRulePresent2() : void
         {
             injector.newRule().whenAskedFor(SingletonClass).named("notSingleton").useClass(SingletonClass);
 
+            //injector.newRule().whenAskedFor(SingletonClass).named("actuallyNotSingleton").createInstanceOf(SingletonClass);
+
             var instance1 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
             var instance2 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-			var instance3 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
-			var instance4 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance3 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance4 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
 
             assertTrue("instances should be strictly equal!", instance1 === instance2);
-            assertFalse("instances should not be equal!", instance1 == instance3);
-            assertFalse("instances should not be equal!", instance1 == instance4);
-            assertFalse("instances should not be equal!", instance3 == instance4);
+            assertTrue("instances should be strictly equal!", instance1 === instance3);
+            assertTrue("instances should be strictly equal!", instance1 === instance4);
+//            assertFalse("instances should not be equal!", instance1 == instance3);
+//            assertFalse("instances should not be equal!", instance1 == instance4);
+//            assertFalse("instances should not be equal!", instance3 == instance4);
         }
 
         public function testMultipleInjectorMode() : void
@@ -189,7 +201,7 @@ package tests
         {
             const fooValue : String = "Foo Value " + Math.floor(Math.random() * 99999);
 
-            injector.newRule().whenAskedFor(String).named("foo").useInstance(fooValue);
+            injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
 
             var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
 
@@ -205,7 +217,7 @@ package tests
             const fooValue2 : String = "Foo Value2 " + Math.floor(Math.random() * 99999);
             const fooValue3 : String = "Foo Value3 " + Math.floor(Math.random() * 99999);
 
-            injector.newRule().whenAskedFor(String).named("foo").useInstance(fooValue);
+            injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
             var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
 
             assertNull("String1 should be null initially", injectee.l1);
@@ -213,7 +225,7 @@ package tests
 
             var host : Host = new Host();
 
-            injector.newRule().whenAskedFor(String).named("live1").useInstance(fooValue2);
+            injector.newRule().whenAskedFor(String).named("live1").useValue(fooValue2);
 
             assertEquals("Value should be updated", fooValue2, injectee.l1);
 
@@ -229,7 +241,7 @@ package tests
 
         public function testPostConstruct() : void
         {
-            injector.newRule().whenAskedFor(String).named("foo").useInstance("fooValue");
+            injector.newRule().whenAskedFor(String).named("foo").useValue("fooValue");
             var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
 
             assertTrue("PostConstruct function was not called", injectee.setupWasCalled);
