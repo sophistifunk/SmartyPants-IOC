@@ -41,10 +41,6 @@ package net.expantra.smartypants
             if (instance is DisplayObject && instance.parent)
                 return locateInjectorFor(instance.parent);
 
-            //See if there's one floating around for Application.application.
-            if (injectorRegistry.hasInjector(Application.application))
-                return injectorRegistry.getInjectorFor(Application.application);
-
             return null;
         }
 

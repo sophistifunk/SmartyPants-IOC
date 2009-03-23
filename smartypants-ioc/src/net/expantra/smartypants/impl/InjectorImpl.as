@@ -291,14 +291,31 @@ package net.expantra.smartypants.impl
 
         //--------------------------------------------------------------------------
         //
-        //  Internal API - called by rules to create bindings
+        //  Internal API
         //
         //--------------------------------------------------------------------------
+
+        private var safeGuard : Object = {};
 
         /**
         * Action a request for an instance
         */
         sp_internal function fulfilRequest(request : InjectorCriteria) : Object
+        {
+            //Some checks to keep us away from Apple headquarters.
+            var idString : String = request.toString();
+
+            if (idString in safeGuard)
+                throw new Error("Circular rule detected. Criteria " + request + " has been encountered twice");
+
+            safeGuard[idString] = true;
+            var result : Object = fulfilRequestWork(request);
+            delete safeGuard[idString];
+
+            return result;
+        }
+
+        private function fulfilRequestWork(request : InjectorCriteria) : Object
         {
             //Do we have a rule that matches our criteria?
             var provider : Provider = lookupProviderForCriteria(request);

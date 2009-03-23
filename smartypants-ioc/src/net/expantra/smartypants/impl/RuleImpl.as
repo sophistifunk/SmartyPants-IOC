@@ -57,7 +57,11 @@ package net.expantra.smartypants.impl
         */
         public function useClass(implementingClass : Class) : void
         {
-            useRuleFor(implementingClass);
+            if (implementingClass == clazz && !name)
+                throw new Error("Can't bind an unnamed " + implementingClass + " to itself. If you're trying to " +
+                        "override a [Singleton] annotation, use the .createInstanceOf() rule ending.");
+            else
+                useRuleFor(implementingClass);
         }
 
         public function useProvider(provider : Provider) : void
