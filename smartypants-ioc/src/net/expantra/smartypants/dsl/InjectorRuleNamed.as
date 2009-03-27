@@ -7,9 +7,15 @@ package net.expantra.smartypants.dsl
     public interface InjectorRuleNamed
     {
         /**
-         * Binds an implementing class. If class is decorated with [Singleton] it will be bound as a singleton, otherwise will be instantiated for every request.
+         * Binds an implementing class. Shorcut for useRuleFor(implementingClass, null)
          */
         function useClass(implementingClass : Class) : void;
+
+        /**
+         * Binds an implementing class. Unlike useClass(), createInstanceOf() does not go through any more rules, and [Singleton] annotation
+         * will be ignored.
+         */
+        function createInstanceOf(implementingClass : Class) : void;
 
         [Deprecated(replacement="useValue")]
         /**

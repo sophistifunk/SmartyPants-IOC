@@ -86,8 +86,8 @@ package tests
 
         public function testSimpleRequests() : void
         {
-            var button : * = injector.newRequest().forClass(Button).getInstance();
-            var panel : * = injector.newRequest().forClass(Panel).getInstance();
+            var button : * = injector.newRequest(this).forClass(Button).getInstance();
+            var panel : * = injector.newRequest(this).forClass(Panel).getInstance();
 
             assertTrue("Got the wrong item for button", button is Button);
             assertTrue("Got the wrong item for panel", panel is Panel);
@@ -95,9 +95,9 @@ package tests
 
         public function testSingletonAnnotation() : void
         {
-            var instance1 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-            var provider : Provider = injector.newRequest().forClass(SingletonClass).getProvider();
+            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var provider : Provider = injector.newRequest(this).forClass(SingletonClass).getProvider();
 
             assertTrue("instances should be strictly equal!", instance1 === instance2);
 
@@ -116,8 +116,8 @@ package tests
                 //...
             }
 
-            var instance1 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
+            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
 
             assertTrue("instances should be equal!", instance1 == instance2);
         }
@@ -128,10 +128,10 @@ package tests
 
             //injector.newRule().whenAskedFor(SingletonClass).named("actuallyNotSingleton").createInstanceOf(SingletonClass);
 
-            var instance1 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest().forClass(SingletonClass).getInstance();
-            var instance3 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
-            var instance4 : SingletonClass = injector.newRequest().forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance3 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance4 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
 
             assertTrue("instances should be strictly equal!", instance1 === instance2);
             assertTrue("instances should be strictly equal!", instance1 === instance3);
@@ -175,7 +175,7 @@ package tests
         {
             try
             {
-                var o : * = injector.newRequest().forClass(SingletonClass).named("nameHasNoRule").getInstance();
+                var o : * = injector.newRequest(this).forClass(SingletonClass).named("nameHasNoRule").getInstance();
                 fail("Expecting an exception when trying to get an instance by name without a valid rule");
             }
             catch (ignored : *)
@@ -188,7 +188,7 @@ package tests
         {
             try
             {
-                injector.newRequest().forClass(Injectee).getInstance();
+                injector.newRequest(this).forClass(Injectee).getInstance();
                 fail("Injectee requires unresolveable dependencies, so should fail");
             }
             catch (ignored : *)
@@ -203,7 +203,7 @@ package tests
 
             injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
 
-            var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
+            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertEquals("stringNamedFoo not set correctly", fooValue, injectee.stringNamedFoo);
             assertEquals("stringNamedFooProvider not set correctly", fooValue, injectee.stringNamedFooProvider.getInstance());
@@ -218,7 +218,7 @@ package tests
             const fooValue3 : String = "Foo Value3 " + Math.floor(Math.random() * 99999);
 
             injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
-            var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
+            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertNull("String1 should be null initially", injectee.l1);
             assertNull("String2 should be null initially", injectee.l2);
@@ -242,7 +242,7 @@ package tests
         public function testPostConstruct() : void
         {
             injector.newRule().whenAskedFor(String).named("foo").useValue("fooValue");
-            var injectee : Injectee = injector.newRequest().forClass(Injectee).getInstance();
+            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertTrue("PostConstruct function was not called", injectee.setupWasCalled);
             assertEquals("Wrong injector value passed to injectee.setup()", injector, injectee.setupInjector);

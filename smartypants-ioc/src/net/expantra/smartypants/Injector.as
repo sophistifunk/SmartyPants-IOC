@@ -8,7 +8,7 @@ package net.expantra.smartypants
         /**
          * Create an InjectorRequest.
          */
-        function newRequest() : InjectorRequestRoot;
+        function newRequest(injectee : Object) : InjectorRequestRoot;
 
         /**
          * Create an InjectorRule

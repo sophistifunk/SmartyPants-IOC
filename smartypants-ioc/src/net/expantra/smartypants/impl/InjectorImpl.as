@@ -62,9 +62,9 @@ package net.expantra.smartypants.impl
         /**
          * Create an InjectorRequest.
          */
-        public function newRequest() : InjectorRequestRoot
+        public function newRequest(injectee : Object) : InjectorRequestRoot
         {
-            return new RequestImpl(this);
+            return new RequestImpl(this, injectee);
         }
 
         /**
@@ -231,13 +231,13 @@ package net.expantra.smartypants.impl
                 {
                     log.debug("This is a provider injection");
 
-                    valueToInject = newRequest().forClass(actualClassToInject).named(injectionName).getProvider();
+                    valueToInject = newRequest(targetInstance).forClass(actualClassToInject).named(injectionName).getProvider();
                 }
                 else
                 {
                     log.debug("This is a standard injection");
 
-                    valueToInject = fulfilRequest(criteria);
+                    valueToInject = fulfilRequest(criteria, targetInstance);
                 }
 
                 //Set the field.
@@ -300,8 +300,10 @@ package net.expantra.smartypants.impl
         /**
         * Action a request for an instance
         */
-        sp_internal function fulfilRequest(request : InjectorCriteria) : Object
+        sp_internal function fulfilRequest(request : InjectorCriteria, injectee : Object) : Object
         {
+            //Injectee is currently ignored, until we have "contexts" to solve the robot-legs problem
+
             //Some checks to keep us away from Apple headquarters.
             var idString : String = request.toString();
 

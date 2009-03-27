@@ -1,49 +1,39 @@
 package net.expantra.smartypants.utils
 {
 	import flash.utils.getQualifiedClassName;
-
+    import net.expantra.smartypants.impl.sp_internal;
 	import mx.logging.ILogger;
-	import mx.logging.Log;
-	import mx.logging.LogEventLevel;
-	import mx.logging.targets.TraceTarget;
 
 	public class SPLoggingUtil
 	{
         private static const badLogNameChars : RegExp = /[\[\]\~\$\^\&\\(\)\{\}\+\?\/=`!@#%,:;'"<>\s]+/g;
 
-        private static var setupCompleted : Boolean = false;
-        private static var normalTarget : TraceTarget;
-
 		/**
 		 * Replace this function from a [Mixin] if you want to hook my logging into your logging :)
+		 * Should point to a Function of signatre <code>f(name : String) : ILogger</code>
 		 */
-        public static var getDefaultLogger : Function = _getDefaultLogger;
+        sp_internal static var getDefaultLoggerWorkFunction : Function = __getDefaultLoggerWork;
 
-        private static function _getDefaultLogger(forInstance : Object) : ILogger
+        /**
+         * Logger lookup function. String->ILogger lookup is via sp_internal::getDefaultLoggerWorkFunction so you can
+         * inject your own function from a [Mixin] (frame 1) function, so SP logs through your logging system.
+         * @param instanceOrName instance of a class (or a class itself), or any String name.
+         * @return ILogger
+         */
+        public static function getDefaultLogger(instanceOrName : Object) : ILogger
         {
-        	var id : String = getQualifiedClassName(forInstance);
+        	var id : String = instanceOrName is String ? instanceOrName as String
+        	                                           : getQualifiedClassName(instanceOrName);
+
+        	//Sanity check.
         	id = id.replace(badLogNameChars, ".");
-        	return setup(Log.getLogger(id));
+
+        	return sp_internal::getDefaultLoggerWorkFunction(id);
         }
 
-        private static function setup(log : ILogger) : ILogger
+        private static function __getDefaultLoggerWork(name : String) : ILogger
         {
-        	if (!setupCompleted)
-        	{
-        		normalTarget = new TraceTarget();
-		        normalTarget.level = LogEventLevel.ALL;
-		        normalTarget.includeCategory = false;
-		        normalTarget.includeDate = false;
-		        normalTarget.includeLevel = true;
-		        normalTarget.includeTime = false;
-		        normalTarget.filters = ["net.expantra.*"];
-        		setupCompleted = true;
-        	}
-
-        	normalTarget.addLogger(log);
-        	return log;
+            return new SimpleTraceLogger(name);
         }
-
-
 	}
 }

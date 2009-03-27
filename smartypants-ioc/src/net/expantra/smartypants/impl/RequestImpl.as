@@ -21,6 +21,7 @@ package net.expantra.smartypants.impl
         private var injector : InjectorImpl;
         private var _forClass : Class;
         private var _forName : String;
+        private var injectee : Object;
 
         //--------------------------------------------------------------------------
         //
@@ -28,9 +29,10 @@ package net.expantra.smartypants.impl
         //
         //--------------------------------------------------------------------------
 
-        public function RequestImpl(injector : InjectorImpl)
+        public function RequestImpl(injector : InjectorImpl, injectee : Object)
         {
             this.injector = injector;
+            this.injectee = injectee;
         }
 
         //--------------------------------------------------------------------------
@@ -59,7 +61,7 @@ package net.expantra.smartypants.impl
         */
         public function getInstance() : *
         {
-            return injector.fulfilRequest(new InjectorCriteria(this._forClass, this._forName));
+            return injector.fulfilRequest(new InjectorCriteria(this._forClass, this._forName), injectee);
         }
 
         /**

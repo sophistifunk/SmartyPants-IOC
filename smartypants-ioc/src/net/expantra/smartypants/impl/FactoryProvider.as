@@ -3,8 +3,6 @@ package net.expantra.smartypants.impl
 	import net.expantra.smartypants.Provider;
 	import net.expantra.smartypants.sp_injector;
 
-    import net.expantra.smartypants.impl.sp_internal;
-
     use namespace sp_internal;
 
 	public class FactoryProvider implements Provider

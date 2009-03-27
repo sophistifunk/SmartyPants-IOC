@@ -69,6 +69,11 @@ package net.expantra.smartypants.impl
             injector.bindProvider(provider, new InjectorCriteria(clazz, name));
         }
 
+        public function createInstanceOf(implementingClass : Class) : void
+        {
+            injector.bindProvider(new FactoryProvider(implementingClass), new InjectorCriteria(clazz, name));
+        }
+
         /**
         * Binds a property chain (acts as Flex data binding)
         */
@@ -89,20 +94,8 @@ package net.expantra.smartypants.impl
 
         public function useRuleFor(existingRuleClass : Class, existingRuleName : String = null) : void
         {
-            //First we get our intermediary provider, by way of which we achieve this magic :)
-            var provider : Provider;
-
-            if (existingRuleName)
-            {
-                provider = injector.newRequest().forClass(existingRuleClass).named(existingRuleName).getProvider();
-            }
-            else
-            {
-                provider = injector.newRequest().forClass(existingRuleClass).getProvider();
-            }
-
-            //Now bind this rule, to that new provider!
-            injector.bindProvider(provider, new InjectorCriteria(clazz, name));
+            //TODO: How should we handle "injectee" in this case?
+            injector.bindProvider(new RuleProvider(existingRuleClass, existingRuleName, null), new InjectorCriteria(clazz, name));
         }
 
         //--------------------------------------------------------------------------

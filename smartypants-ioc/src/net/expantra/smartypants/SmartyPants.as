@@ -2,9 +2,7 @@ package net.expantra.smartypants
 {
 	import flash.display.DisplayObject;
 
-	import mx.core.Application;
-
-	import net.expantra.smartypants.dsl.InjectorRequestUnNamed;
+	import net.expantra.smartypants.dsl.InjectorRequestRoot;
 	import net.expantra.smartypants.dsl.InjectorRuleUnNamed;
 	import net.expantra.smartypants.impl.InjectorImpl;
 	import net.expantra.smartypants.impl.InjectorRegistry;
@@ -140,15 +138,14 @@ package net.expantra.smartypants
 
         /**
          * Make a request. Requires SmartyPants to be in single-injector mode (the default behaviour)
-         * @param requestedClass
          * @return
          */
-        public static function forClass(requestedClass : Class) : InjectorRequestUnNamed
+        public static function newRequest(injectee : Object) : InjectorRequestRoot
         {
             if (!singleInjector)
                 throw new Error("SmartyPants.forClass() requires SmartyPants-IOC to be in single-injector mode");
 
-            return singleInjector.newRequest().forClass(requestedClass);
+            return singleInjector.newRequest(injectee);
         }
 
         //--------------------------------------------------------------------------
