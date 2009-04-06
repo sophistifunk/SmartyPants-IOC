@@ -2,11 +2,14 @@ package net.expantra.smartypants
 {
 	import flash.display.DisplayObject;
 
+	import mx.logging.ILogger;
+
 	import net.expantra.smartypants.dsl.InjectorRequestRoot;
 	import net.expantra.smartypants.dsl.InjectorRuleUnNamed;
 	import net.expantra.smartypants.impl.InjectorImpl;
 	import net.expantra.smartypants.impl.InjectorRegistry;
 	import net.expantra.smartypants.impl.sp_internal;
+	import net.expantra.smartypants.utils.SPLoggingUtil;
 
     use namespace sp_internal;
 
@@ -15,6 +18,16 @@ package net.expantra.smartypants
     */
 	public class SmartyPants
 	{
+	    private static var _log : ILogger;
+
+	    private static function get log() : ILogger
+	    {
+	        if (!_log)
+	           _log = SPLoggingUtil.getDefaultLogger(SmartyPants);
+
+	        return _log;
+	    }
+
         //--------------------------------------------------------------------------
         //
         //  Public API
@@ -95,8 +108,7 @@ package net.expantra.smartypants
          */
         public static function set singleInjectorMode(value : Boolean) : void
         {
-            if (value == _singleInjectorMode)
-                return;
+            log.debug("Setting singleInjectorMode to {0}.", value);
 
             //We can't go back to single-injector mode if there's multiple injectors referenced at the moment!
             if (value == true && injectorRegistry.numberOfInjectors > 1)

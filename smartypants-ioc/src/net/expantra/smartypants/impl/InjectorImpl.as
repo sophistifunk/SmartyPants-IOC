@@ -49,8 +49,8 @@ package net.expantra.smartypants.impl
 
         public function InjectorImpl()
         {
-        	super();
-        	SmartyPants.injectorRegistry.injectorCreated(this);
+            super();
+            SmartyPants.injectorRegistry.injectorCreated(this);
         }
 
         //--------------------------------------------------------------------------
@@ -272,7 +272,7 @@ package net.expantra.smartypants.impl
                 injectIntoWork(parentInstance[fieldName]);
             }
 
-            //And [InjentIntoContents] for arrays, lists, dictionaries, etc
+            //And [InjectIntoContents] for arrays, lists, dictionaries, etc
 
             injectIntoTargets = Reflection.filterMembersByMetadataName(readableProperties, "InjectIntoContents");
 
@@ -284,7 +284,7 @@ package net.expantra.smartypants.impl
 
                 for each (var target : Object in parentInstance[fieldName])
                 {
-                	injectIntoWork(target);
+                    injectIntoWork(target);
                 }
             }
         }
@@ -308,11 +308,26 @@ package net.expantra.smartypants.impl
             var idString : String = request.toString();
 
             if (idString in safeGuard)
-                throw new Error("Circular rule detected. Criteria " + request + " has been encountered twice");
+            {
+                log.error("Circular rule detected. Criteria {0} has been encountered twice", request);
+                throw new Error("Circular rule detected! Criteria \"" + request + "\" has been encountered twice");
+            }
 
             safeGuard[idString] = true;
-            var result : Object = fulfilRequestWork(request);
-            delete safeGuard[idString];
+
+            try
+            {
+                var result : Object = fulfilRequestWork(request);
+            }
+            catch(e:Error)
+            {
+                log.error("Attempting to fulfil request, got {0}", e.getStackTrace());
+                throw e;
+            }
+            finally
+            {
+                delete safeGuard[idString];
+            }
 
             return result;
         }
@@ -344,7 +359,7 @@ package net.expantra.smartypants.impl
 
             try
             {
-            	log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
+                log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
 
                 //Step 1. Instantiate it
                 instance = instantiate(request.forClass);
@@ -352,7 +367,7 @@ package net.expantra.smartypants.impl
                 //Step 2. Check to see if it's marked [Singleton] - if so, create a rule for future lookups
                 if (Reflection.getClassMetadata(request.forClass, "Singleton").length() > 0)
                 {
-                	log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
+                    log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
                     newRule().whenAskedFor(request.forClass).useValue(instance);
                 }
 
@@ -362,7 +377,7 @@ package net.expantra.smartypants.impl
             }
             catch (e : Error)
             {
-            	log.error("Could not fulfil the request for {0} due to {1} at {2}", request, e, e.getStackTrace());
+                log.error("Could not fulfil the request for {0} due to {1} at {2}", request, e, e.getStackTrace());
                 throw new Error("Could not fulfil the request for " + request + " due to " + e + "\n" + e.getStackTrace());
             }
 
@@ -461,20 +476,28 @@ package net.expantra.smartypants.impl
             bindProvider(provider, criteria);
         }
 
-//        /**
-//        * Bind to an implementing class or subclass, if the criteria class is a proper class rather than an interface
-//        */
-//        sp_internal function bindImpl(implementingClass : Class, criteria : InjectorCriteria) : void
-//        {
-//            bindProvider(new FactoryProvider(implementingClass), criteria);
-//        }
-
         /**
         * Performs actual instantiation - This is where we'll be doing our constructor injection soon!
         */
         sp_internal function instantiate(clazz : Class) : *
         {
             return new clazz();
+        }
+
+        /**
+         * Clears a rule.
+         * @param criteria criteria for which we want to remove any rule that exists.
+         */
+        sp_internal function removeRule(criteria : InjectorCriteria) : void
+        {
+            var existingIndex : Number = findExactMatchIndex(criteria);
+
+            if (existingIndex >= 0)
+            {
+                //Jah, so replace that record
+                criteriaList.splice(existingIndex, 1);
+                providerList.splice(existingIndex, 1);
+            }
         }
 
         //--------------------------------------------------------------------------

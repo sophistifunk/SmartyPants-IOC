@@ -98,6 +98,14 @@ package net.expantra.smartypants.impl
             injector.bindProvider(new RuleProvider(existingRuleClass, existingRuleName, null), new InjectorCriteria(clazz, name));
         }
 
+        /**
+         * @inheritDoc
+         */
+        public function defaultBehaviour() : void
+        {
+            injector.removeRule(new InjectorCriteria(clazz, name));
+        }
+
         //--------------------------------------------------------------------------
         //
         //  Internal API - called by Injector to interrogate the request

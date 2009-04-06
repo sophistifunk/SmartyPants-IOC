@@ -53,5 +53,10 @@ package net.expantra.smartypants.dsl
         * Binds a property chain (acts as Flex data binding)
         */
         function useBindableProperty(host : IEventDispatcher, chain : Object) : void;
+
+        /**
+         * Revert to default behaviour - will remove any existing rule that matches these criteria
+         */
+        function defaultBehaviour() : void;
     }
 }
