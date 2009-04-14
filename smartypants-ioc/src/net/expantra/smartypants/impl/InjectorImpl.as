@@ -221,6 +221,19 @@ package net.expantra.smartypants.impl
                     {
                         valueToInject = provider.getInstance();
                     }
+                    else if (!criteria.forName)
+                    {
+                        log.debug("There's no name, so we'll try and instantiate it...");
+                        try
+                        {
+                            valueToInject = doDefaultInstantiation(criteria);
+                        }
+                        catch (e:Error)
+                        {
+                            //Could not instantiate, but since it's a live rule, we don't throw an exception, it may have a valid value in future.
+                            log.debug("Ignoring a {0} trying to instantiate a live request for {1}.", e, criteria);
+                        }
+                    }
                     else
                     {
                         log.debug("But there's no provider yet.");
@@ -361,25 +374,37 @@ package net.expantra.smartypants.impl
             {
                 log.debug("No rules found, attempting to instantiate a new {0}.", request.forClass);
 
-                //Step 1. Instantiate it
-                instance = instantiate(request.forClass);
-
-                //Step 2. Check to see if it's marked [Singleton] - if so, create a rule for future lookups
-                if (Reflection.getClassMetadata(request.forClass, "Singleton").length() > 0)
-                {
-                    log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
-                    newRule().whenAskedFor(request.forClass).useValue(instance);
-                }
-
-                //Step 3. Make sure to populate our newly created instance with whatever it needs
-                log.debug("A {0} was Instantated, attempting to inject into the new instance.", request.forClass);
-                injectInto(instance);
+                instance = doDefaultInstantiation(request);
             }
             catch (e : Error)
             {
                 log.error("Could not fulfil the request for {0} due to {1} at {2}", request, e, e.getStackTrace());
                 throw new Error("Could not fulfil the request for " + request + " due to " + e + "\n" + e.getStackTrace());
             }
+
+            return instance;
+        }
+
+        /**
+         * The default behaviour when attempting to inject an unnamed class when no rule is found.
+         */
+        private function doDefaultInstantiation(request : InjectorCriteria) : Object
+        {
+            var instance : Object;
+
+            //Step 1. Instantiate it
+            instance = instantiate(request.forClass);
+
+            //Step 2. Check to see if it's marked [Singleton] - if so, create a rule for future lookups
+            if (Reflection.getClassMetadata(request.forClass, "Singleton").length() > 0)
+            {
+                log.debug("{0} is marked [Singleton], creating a rule for future use.", request.forClass);
+                newRule().whenAskedFor(request.forClass).useValue(instance);
+            }
+
+            //Step 3. Make sure to populate our newly created instance with whatever it needs
+            log.debug("A {0} was Instantated, attempting to inject into the new instance.", request.forClass);
+            injectInto(instance);
 
             return instance;
         }

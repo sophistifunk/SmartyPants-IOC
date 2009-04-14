@@ -29,6 +29,16 @@ package tests.support
 
         public var setupInjector : Injector;
 
+        [InjectInto]
+        public var subInjectee : SubInjectee = new SubInjectee();
+
+        [InjectIntoContents]
+        public var subInjectees : Array = [new SubInjectee(),
+                                           new SubInjectee(),
+                                           new SubInjectee(),
+                                           new SubInjectee(),
+                                           new SubInjectee()];
+
         [PostConstruct]
         public function setup(injector : Injector) : void
         {
