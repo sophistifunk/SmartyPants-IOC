@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" xmlns:flexui="flexunit.flexui.*" creationComplete="setup()">
+
+    <mx:Script>
+        <![CDATA[
+            import tests.SmartyPantsTestSuite;
+            import flexunit.framework.TestSuite;
+
+            private function setup() : void
+            {
+                testRunner.test = new TestSuite(SmartyPantsTestSuite);
+                testRunner.startTest();
+            }
+
+        ]]>
+    </mx:Script>
+
+    <flexui:TestRunnerBase id="testRunner" verticalCenter="0" left="10" right="10" height="500"/>
+
+</mx:Application>
