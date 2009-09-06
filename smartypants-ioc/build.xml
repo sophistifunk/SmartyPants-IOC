@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<project basedir="." name="SmartyPants-IOC">
+    
+    <!-- Simple properties -->
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="docs.dir" value="${basedir}/docs"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="compile.artifact.name" value="${ant.project.name}.swc"/>
+    <property name="dist.artifact.name" value="${ant.project.name}.zip"/>
+    <property environment="env"/>
+    
+    <!-- Allow a FLEX_HOME environment variable -->
+    <condition property="FLEX_HOME" value="${env.FLEX_HOME}">
+        <isset property="env.FLEX_HOME"/>
+    </condition>
+
+    <!-- Look for build.properties -->
+    <property file="${basedir}/build.properties"/>
+    
+    <!-- System-specific properties - safety check so we don't go creating files with ${something} in them :) -->
+    <target name="checkProperties">
+        <fail unless="FLEX_HOME">Flex home property not set, please double-check your build.properties file, or set the FLEX_HOME environment variable.</fail>
+        <property name="flex.bin" value="${FLEX_HOME}/bin"/>
+    </target>
+    
+    <!-- Check required files / directories exist" -->
+    <target name="checkFiles" depends="checkProperties">
+        <available file="${FLEX_HOME}" property="exists.flex"/>
+        <available file="${flex.bin}" property="exists.flex.bin"/>
+        <fail unless="exists.flex">I couldn't find the Flex SDK (${FLEX_HOME}), please check your build.properties file, or set the FLEX_HOME environment variable.</fail>
+        <fail unless="exists.flex.bin">I couldn't find the Flex SDK /bin directory (${flex.bin}), please check your build.properties file, or set the FLEX_HOME environment variable.</fail>
+    </target>
+    
+    <!-- Check everything -->
+    <target name="checkAll" depends="checkProperties"/>
+    
+    <!-- Clean -->
+    <target name="clean" depends="checkAll">
+        <delete dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <mkdir dir="${docs.dir}"/>
+    </target>
+    
+    <target name="cleanDist" depends="checkAll">
+        <delete dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+    
+    <!-- Compile the library -->
+    <target name="build" depends="checkAll">
+        
+        <!-- Pull in the Flex ant tasks from the SDK -->
+        <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+        
+        <!-- Gets the class names of files, thanks to Gregor Kiddie<gkiddie@inpses.co.uk> -->
+        <fileset dir="${src.dir}" id="src.dir.fileset"/>
+        <pathconvert property="project.classes" pathsep=" " refid="src.dir.fileset">
+              <compositemapper>
+
+                    <chainedmapper>
+                          <globmapper from="${src.dir}/*" to="*" handledirsep="true" />
+                          <mapper type="package" from="*.as" to="*" />
+                    </chainedmapper>
+
+                    <chainedmapper>
+                          <globmapper from="${src.dir}/*" to="*" handledirsep="true" />
+                          <mapper type="package" from="*.mxml" to="*" />
+                    </chainedmapper>
+
+              </compositemapper>
+        </pathconvert>
+        
+        <!-- Actual compilation -->
+        <compc output="${build.dir}/${compile.artifact.name}" include-classes="${project.classes}">
+
+            <source-path path-element="${src.dir}"/>
+
+            <include-namespaces uri="http://smartypants.expantra.net/ioc/2009/"/>
+            <namespace uri="http://smartypants.expantra.net/ioc/2009/" manifest="${src.dir}/manifest.xml"/>
+
+            <!-- Not needed yet 
+            <compiler.library-path dir="${lib.dir}" append="true">
+                <include name="*" />
+            </compiler.library-path> -->
+
+            <compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+                <include name="libs"/>
+                <include name="../bundles/en_US"/>
+            </compiler.library-path>
+
+            <keep-as3-metadata name="Inject"/>
+            <keep-as3-metadata name="InjectIntoContents"/>
+            <keep-as3-metadata name="InjectInto"/>
+            <keep-as3-metadata name="Singleton"/>
+            <keep-as3-metadata name="PostConstruct"/>
+
+        </compc>
+    </target>
+    
+    <!-- ASDOC -->
+    <target name="asdoc" depends="checkAll">
+        
+        <condition property="asdoc.executable" value="asdoc.exe">
+            <os family="windows"/>
+        </condition>
+
+        <condition property="asdoc.executable" value="asdoc">
+            <not>
+                <os family="windows"/>
+            </not>
+        </condition>
+        
+        <fail unless="asdoc.executable">Abandon all hope, ye who enter here!</fail>
+        
+        <exec executable="${flex.bin}/${asdoc.executable}" failonerror="true">
+            <arg line="-doc-sources '${src.dir}'"/>
+            <arg line="-source-path '${src.dir}'"/>
+            <arg line="-output '${docs.dir}'"/>
+            <arg line="-library-path '${FLEX_HOME}/frameworks/libs'"/>
+            <arg line="-main-title '${ant.project.name}'"/>
+            <arg line="-window-title '${ant.project.name}'"/>
+            <arg line="-footer 'Copyright &amp;amp;copy; 2009 &amp;lt;a href=&quot;http://www.expantra.com/&quot;&amp;gt;Expantra Pty. Ltd.&amp;lt;/a&amp;gt;'"/>
+        </exec>
+        
+    </target>
+
+    <!-- Dist -->
+    <target name="dist" depends="clean,cleanDist,asdoc,build">
+        <copy file="${build.dir}/${compile.artifact.name}" todir="${dist.dir}/bin"/>
+        <copy todir="${dist.dir}/asdoc">
+            <fileset dir="${docs.dir}"/>
+        </copy>
+        <!-- <copy todir="${dist.dir}/src">
+                    <fileset dir="${src.dir}"/>
+                </copy> -->
+        <zip destfile="${basedir}/${dist.artifact.name}">
+            <zipfileset prefix="asdoc" dir="${dist.dir}/asdoc">
+                <include name="**/*.html"/>
+                <include name="**/*.js"/>
+                <include name="**/*.css"/>
+                <include name="**/*.jpg"/>
+                <include name="**/*.gif"/>
+            </zipfileset>
+            <zipfileset prefix="src" dir="${src.dir}">
+                <exclude name="**/.*"/>
+            </zipfileset>
+            <zipfileset prefix="bin" dir="${dist.dir}/bin">
+                <exclude name="**/.*"/>
+            </zipfileset>
+        </zip>
+    </target>
+    
+    
+    
+</project>

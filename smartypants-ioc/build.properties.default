@@ -1,0 +1,14 @@
+##
+## Location of SDK
+##
+
+# Please note: SDK 3.4 does *not* work, there's a bug in asdoc, at least on Mac.
+
+# Gumbo, OS X
+FLEX_HOME=/Applications/Adobe Flash Builder Beta/sdks/4.0.0
+
+# Builder 3 plugin, SDK 3.2, OS X
+# FLEX_HOME=/Applications/Adobe Flex Builder 3 Plug-in/sdks/3.2.0
+
+# Builder 3, Windows
+# FLEX_HOME=C:\Program Files\Flex Builder 3\sdks\3.2
