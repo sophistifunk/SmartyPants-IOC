@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<design>
+    <namespaces>
+        <namespace prefix="Sp" uri="http://smartypants.expantra.net/ioc/2009"/>
+    </namespaces>
+</design>

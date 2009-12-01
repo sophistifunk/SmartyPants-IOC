@@ -20,6 +20,7 @@
     
     <!-- System-specific properties - safety check so we don't go creating files with ${something} in them :) -->
     <target name="checkProperties">
+    	<fail>Ant build is currently broken in Redux. I told you to expect fire.</fail>
         <fail unless="FLEX_HOME">Flex home property not set, please double-check your build.properties file, or set the FLEX_HOME environment variable.</fail>
         <property name="flex.bin" value="${FLEX_HOME}/bin"/>
     </target>

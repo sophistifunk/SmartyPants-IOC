@@ -1,0 +1,21 @@
+# Eclipse / Builder meta
+
+.settings
+.project
+
+# Mac / Windows BS
+
+Thumbs.db
+.DS_Store
+
+# Things built by Builder
+
+# NB: Excluding .flexProperties and .actionScriptProperties from test, but not
+# from main, because test has path info and dependency stuff, and the main does
+# not, but also because it has namespace info, and --keep-as3-metadata=...
+
+main/bin
+test/bin-debug
+test/html-template
+test/.actionScriptProperties
+test/.flexProperties
