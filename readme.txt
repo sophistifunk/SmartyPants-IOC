@@ -1,0 +1,1 @@
+SmartyPants-IOC "redux" branch. Maybe it's 2.0, maybe it's 1.5. Who cares? It's a work in progress, so, you know... Kaboom. 
