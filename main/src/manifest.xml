@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <componentpackage>
 
-    <component id="RequestInjection" class="net.expantra.smartypants.RequestInjection"/>
+    <component id="Injector" class="net.expantra.smartypants.Injector"/>
 
 </componentpackage>

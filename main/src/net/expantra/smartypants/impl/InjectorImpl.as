@@ -9,7 +9,6 @@ package net.expantra.smartypants.impl
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.InjectorCriteria;
     import net.expantra.smartypants.Provider;
-    import net.expantra.smartypants.SmartyPants;
     import net.expantra.smartypants.dsl.InjectorRequestRoot;
     import net.expantra.smartypants.dsl.InjectorRuleRoot;
     import net.expantra.smartypants.impl.live.LiveInjectionManager;
@@ -50,7 +49,6 @@ package net.expantra.smartypants.impl
         public function InjectorImpl()
         {
             super();
-            SmartyPants.injectorRegistry.injectorCreated(this);
         }
 
         //--------------------------------------------------------------------------
@@ -91,10 +89,11 @@ package net.expantra.smartypants.impl
             if (targetInstance == null || targetInstance is Date || Reflection.isSimpleType(targetInstance))
                 return;
 
-            if (SmartyPants.injectorRegistry.alreadyInjected(targetInstance))
-                return;
-
-            SmartyPants.injectorRegistry.registerInjection(this, targetInstance);
+			// TODO: Reimplement this. Is it necessary? What do we gain?
+//            if (alreadyInjected(targetInstance))
+//                return;
+//
+//            registerInjection(targetInstance);
 
             try
             {

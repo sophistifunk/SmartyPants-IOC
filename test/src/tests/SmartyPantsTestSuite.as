@@ -5,18 +5,18 @@ package tests
     import flash.events.IEventDispatcher;
     import flash.system.System;
     import flash.utils.Dictionary;
-
+    
     import flexunit.framework.TestCase;
-
+    
     import mx.containers.Panel;
     import mx.controls.Button;
     import mx.events.PropertyChangeEvent;
-
+    
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.Provider;
-    import net.expantra.smartypants.SmartyPants;
+    import net.expantra.smartypants.impl.InjectorImpl;
     import net.expantra.smartypants.impl.sp_internal;
-
+    
     import tests.support.Host;
     import tests.support.Injectee;
     import tests.support.InjecteeTheSecond;
@@ -66,30 +66,11 @@ package tests
 
         override public function setUp() : void
         {
-            trace();
-            trace("---- Begin Test ----");
-            trace("Test begin: Status is", SmartyPants.status);
-            SmartyPants.singleInjectorMode = true; //Return to the default
-            injector = SmartyPants.getInjectorFor(this);
+            injector = new InjectorImpl();
         }
 
         override public function tearDown() : void
         {
-            trace("Teardown Begin: Status is", SmartyPants.status);
-            injector = undefined;
-            //Try and force an actual GC... Stupid effin' thing.
-            System.gc();
-            new Dictionary();
-            System.gc();
-            new PropertyChangeEvent(PropertyChangeEvent.PROPERTY_CHANGE);
-            System.gc();
-            System.gc();
-            System.gc();
-            System.gc();
-
-            trace("Teardown Complete: Status is", SmartyPants.status);
-            trace("---- End Test ----");
-            trace();
         }
 
          public function testExistence() : void
@@ -159,43 +140,6 @@ package tests
             assertTrue("instances should be strictly equal!", instance1 === instance2);
             assertTrue("instances should be strictly equal!", instance1 === instance3);
             assertTrue("instances should be strictly equal!", instance1 === instance4);
-//            assertFalse("instances should not be equal!", instance1 == instance3);
-//            assertFalse("instances should not be equal!", instance1 == instance4);
-//            assertFalse("instances should not be equal!", instance3 == instance4);
-        }
-
-        public function testMultipleInjectorMode() : void
-        {
-            trace("testMultipleInjectorMode");
-
-            SmartyPants.singleInjectorMode = false;
-
-        	var registeredInjector : Injector = SmartyPants.locateInjectorFor(this);
-
-        	assertNull("There should not be a registered injector for this class", registeredInjector);
-
-        	try
-        	{
-        		SmartyPants.getInjectorFor(this);
-        		fail("We should get an exception when we call getInjectorFor(this)");
-        	}
-        	catch (ignored : *)
-        	{
-        		//Pass
-        	}
-        }
-
-        public function testSingleInjectorMode() : void
-        {
-            trace("testSingleInjectorMode");
-
-            var injector : Injector = SmartyPants.locateInjectorFor(this);
-
-            assertNotNull("There be a 'registered' injector for this class", injector);
-
-            injector = SmartyPants.getInjectorFor(this);
-
-            assertNotNull("There be a fetchable injector for this class", injector);
         }
 
         public function testFailureWhenRequestByNameWithoutMatchingRule() : void
@@ -338,17 +282,17 @@ package tests
             trace("testRuleRemovalAndUpdate");
 
             injector.newRule().whenAskedFor(String).named("teddy").useValue("bear");
-            var shouldBeBear : String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
+            var shouldBeBear : String = injector.newRequest(this).forClass(String).named("teddy").getInstance();
 
             injector.newRule().whenAskedFor(String).named("teddy").useValue("Roosevelt");
-            var shouldBeRoosevelt : String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
+            var shouldBeRoosevelt : String = injector.newRequest(this).forClass(String).named("teddy").getInstance();
 
             injector.newRule().whenAskedFor(String).named("teddy").defaultBehaviour();
             var shouldBeNull : String;
 
             try
             {
-                shouldBeNull = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
+                shouldBeNull = injector.newRequest(this).forClass(String).named("teddy").getInstance();
                 fail("Should have gotten an exception trying to find injection for String named \"teddy\".");
             }
             catch (e:*)
@@ -365,11 +309,11 @@ package tests
         {
             trace("testDefaultRuleForLivePoints");
 
-            var injectee2:InjecteeTheSecond = SmartyPants.newRequest(this).forClass(InjecteeTheSecond).getInstance();
+            var injectee2:InjecteeTheSecond = injector.newRequest(this).forClass(InjecteeTheSecond).getInstance();
 
             var originalValue:String = injectee2.someInstance.identifyingValue;
 
-            SmartyPants.whenAskedFor(SomeClass).useClass(SomeSubClass);
+            injector.newRule().whenAskedFor(SomeClass).useClass(SomeSubClass);
 
             var secondValue:String = injectee2.someInstance.identifyingValue;
 
