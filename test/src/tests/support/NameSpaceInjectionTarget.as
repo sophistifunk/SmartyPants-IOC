@@ -8,10 +8,6 @@ package tests.support
 	{
 		inject var shouldBeAButton:Button;
 		
-		public function NameSpaceInjectionTarget()
-		{
-		}
-
 		public function get shouldBeAButton():*
 		{
 			return inject::shouldBeAButton;	
