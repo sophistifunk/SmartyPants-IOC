@@ -10,7 +10,8 @@ package net.expantra.smartypants.impl
 		private var impl:Class;
 		private var injector:InjectorImpl;
 
-		inject function set _injector(value:InjectorImpl):void
+		[Inject]
+		public function set _injector(value:InjectorImpl):void
 		{
 			injector=value;
 		}
