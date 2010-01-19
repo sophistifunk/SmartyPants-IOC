@@ -42,8 +42,6 @@
 
     </compiler>
 
-    <!--<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>-->
-
     <include-classes>
         <class>net.expantra.smartypants.impl.InjectorImpl</class>
     </include-classes>
