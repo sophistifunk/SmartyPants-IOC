@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+
+    <!-- Specifies the minimum player version that will run the compiled SWF. -->
+    <!-- 9.0.124 is the April 2008 security release -->
+    <target-player>9.0.124</target-player>
+
+    <compiler>
+
+        <source-path>
+            <path-element>src</path-element>
+        </source-path>
+
+        <incremental>true</incremental>
+
+        <keep-as3-metadata append="true">
+            <name>Inject</name>
+            <name>InjectInto</name>
+            <name>InjectIntoContents</name>
+            <name>Singleton</name>
+            <name>PostConstruct</name>
+        </keep-as3-metadata>
+
+        <!-- Remove the "include" library path. -->
+        <library-path append="false"></library-path>
+
+        <!--
+            Set up an "external library" path that is compiled against but not linked.
+            SWCs not used for SP are left in but commented out to make it easier to copy this script
+
+            I don't know why some things have a $ and some don't, so don't ask me :)
+        -->
+        <external-library-path>
+            <path-element>${flexlib}/libs/player/{targetPlayerMajorVersion}/playerglobal.swc</path-element>
+            <path-element>${flexlib}/libs/framework.swc</path-element>
+            <!--<path-element>${flexlib}/libs/flex.swc</path-element>-->
+            <!--<path-element>${flexlib}/libs/rpc.swc</path-element>-->
+            <!--<path-element>${flexlib}/libs/utilities.swc</path-element>-->
+            <!--<path-element>${flexlib}/libs/datavisualization.swc</path-element>-->
+            <!--<path-element>${flexlib}/locale/{locale}</path-element>-->
+        </external-library-path>
+
+    </compiler>
+
+    <!--<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>-->
+
+    <include-classes>
+        <class>net.expantra.smartypants.impl.InjectorImpl</class>
+    </include-classes>
+
+    <output>./build/SmartyPants-IOC.swc</output>
+
+</flex-config>
