@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+
+    <!-- Specifies the minimum player version that will run the compiled SWF. -->
+    <!-- 9.0.124 is the April 2008 security release -->
+    <target-player>9.0.124</target-player>
+
+    <compiler>
+
+        <source-path>
+            <path-element>src</path-element>
+        </source-path>
+
+        <incremental>true</incremental>
+
+        <keep-as3-metadata append="true">
+            <name>Inject</name>
+            <name>InjectInto</name>
+            <name>InjectIntoContents</name>
+            <name>Singleton</name>
+            <name>PostConstruct</name>
+        </keep-as3-metadata>
+
+    </compiler>
+
+    <file-specs>
+        <path-element>src/SmartyPantsTestApplication.mxml</path-element>
+    </file-specs>
+
+    <output>./build/SmartyPants-IOC-Tests.swf</output>
+
+</flex-config>
