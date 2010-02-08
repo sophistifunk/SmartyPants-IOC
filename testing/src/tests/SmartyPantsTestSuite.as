@@ -123,6 +123,17 @@ package tests
             assertTrue("provider must return same instance also", instance1 === provider.getInstance());
         }
 
+        public function testHasExplicitRule() : void
+        {
+        	assertFalse("Injector should not yet have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
+        	assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
+
+			injector.newRule().whenAskedFor(String).named("Bart").useValue("Homer's son");
+
+        	assertTrue("Injector should now have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
+        	assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
+        }
+
         public function testCantBindFooToFoo() : void
         {
             trace("testCantBindFooToFoo");
