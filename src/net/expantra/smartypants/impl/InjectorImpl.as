@@ -3,9 +3,9 @@ package net.expantra.smartypants.impl
     import flash.events.IEventDispatcher;
     import flash.utils.getDefinitionByName;
     import flash.utils.getQualifiedClassName;
-
+    
     import mx.logging.ILogger;
-
+    
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.InjectorCriteria;
     import net.expantra.smartypants.Provider;
@@ -88,7 +88,7 @@ package net.expantra.smartypants.impl
          */
         public function hasExplicitRuleFor(clazz:Class, named:String = null):Boolean
         {
-            throw new Error("TODO!");
+            return !!lookupProviderForCriteria(new InjectorCriteria(clazz, named));
         }
 
         /**
@@ -167,16 +167,12 @@ package net.expantra.smartypants.impl
 
                 var fieldName:* = Reflection.getPropertyName(injectionPoint);
 
-                var fieldType:String = injectionPoint.@type;
-                if (fieldType == "*")
-                    fieldType = "Object";
+                var fieldType:Class = resolveClassByName(injectionPoint.@type);
 
                 var tmp:* = injectionMetadata.child("arg");
                 tmp = tmp.(attribute("key") == "type");
 
-                var injectionType:String = tmp.attribute("value");
-                if (injectionType == "*")
-                    injectionType = "Object";
+                var injectionTypeName:String = tmp.attribute("value");
 
                 var injectionName:String = injectionMetadata.child("arg").(attribute("key") == "name").attribute("value");
 
@@ -185,30 +181,9 @@ package net.expantra.smartypants.impl
                 var liveInjection:Boolean = injectionMetadata.child("arg").(attribute("key") == "" && attribute("value") == "live").length() >
                     0;
 
-                //Clean up some string fields. Might not be necessary.
-
-                if (injectionName == "")
-                    injectionName = null;
-
-                if (injectionType == "")
-                    injectionType = null;
-
-                log.debug("Attempting to find a value for the field named " + fieldName + ", which is a " + fieldType + ". injectionType = " +
-                          injectionType + ", injectionName = " + injectionName);
-
                 //Get a reference to the injected class type
 
-                var actualClassToInject:Class = resolveClassByName(injectionType);
-
-                try
-                {
-                    actualClassToInject = Class(getDefinitionByName(injectionType ? injectionType : fieldType));
-                }
-                catch (e:Error)
-                {
-                    throw new Error("While trying to inject the value for the field named \"" + fieldName + "\", I could not lookup the class " +
-                                    (injectionType ? injectionType : fieldType) + ", due to " + e + "\n" + e.getStackTrace());
-                }
+                var actualClassToInject:Class = injectionTypeName ? resolveClassByName(injectionTypeName) : fieldType;
 
                 var criteria:InjectorCriteria = new InjectorCriteria(actualClassToInject, injectionName);
 
@@ -266,12 +241,25 @@ package net.expantra.smartypants.impl
 
                 //Set the field.
 
-                log.debug("Attempting to set the field named " + fieldName + ", which is a " + fieldType + ". injectionType = " + injectionType +
+                log.debug("Attempting to set the field named " + fieldName + ", which is a " + fieldType + ". injectionTypeName = " + injectionTypeName +
                           ", injectionName = " + injectionName);
                 log.debug("valueToInject = " + valueToInject);
 
                 targetInstance[fieldName] = valueToInject;
             }
+        }
+
+        /**
+         * Given a name (that may be nothing, or "*") return a Class
+         * @param typeName
+         * @return the matching class, or null if the
+         */
+        private function resolveClassByName(typeName:String):Class
+        {
+            if (typeName == "*")
+                return Object;
+
+            return Class(getDefinitionByName(typeName));
         }
 
         /**
