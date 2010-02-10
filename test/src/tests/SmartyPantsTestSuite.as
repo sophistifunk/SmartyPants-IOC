@@ -316,11 +316,11 @@ package tests
             assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
         }
 
-        public function test_InjectNamespaceShouldBeSupported():void
-        {
-            var injectee:NameSpaceInjectionTarget = injector.newRequest(this).forClass(NameSpaceInjectionTarget).getInstance();
-
-            assertTrue("A button should have been created and injected into injectee", injectee.shouldBeAButton is Button);
-        }
+//        public function test_InjectNamespaceShouldBeSupported():void
+//        {
+//            var injectee:NameSpaceInjectionTarget = injector.newRequest(this).forClass(NameSpaceInjectionTarget).getInstance();
+//
+//            assertTrue("A button should have been created and injected into injectee", injectee.shouldBeAButton is Button);
+//        }
     }
 }
