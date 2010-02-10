@@ -1,40 +1,40 @@
 package net.expantra.smartypants.impl
 {
-	import net.expantra.smartypants.Provider;
-	import net.expantra.smartypants.inject;
+    import net.expantra.smartypants.Provider;
+    import net.expantra.smartypants.inject;
 
-	use namespace sp_internal;
+    use namespace sp_internal;
 
-	public class FactoryProvider implements Provider
-	{
-		private var impl:Class;
-		private var injector:InjectorImpl;
+    public class FactoryProvider implements Provider
+    {
+        private var impl:Class;
+        private var injector:InjectorImpl;
 
-		[Inject]
-		public function set _injector(value:InjectorImpl):void
-		{
-			injector=value;
-		}
+        [Inject]
+        public function set _injector(value:InjectorImpl):void
+        {
+            injector = value;
+        }
 
-		public function FactoryProvider(impl:Class)
-		{
-			this.impl=impl;
-		}
+        public function FactoryProvider(impl:Class)
+        {
+            this.impl = impl;
+        }
 
-		public function getInstance():*
-		{
-			//Create
-			var instance:Object=injector.instantiate(impl);
+        public function getInstance():*
+        {
+            //Create
+            var instance:Object = injector.instantiate(impl);
 
-			//Inject. Note that injector.instantiate will not inject fields, nor into member instances.
-			injector.injectInto(instance);
+            //Inject. Note that injector.instantiate will not inject fields, nor into member instances.
+            injector.injectInto(instance);
 
-			return instance;
-		}
+            return instance;
+        }
 
-		public function toString():String
-		{
-			return "FactoryProvider of " + impl;
-		}
-	}
+        public function toString():String
+        {
+            return "FactoryProvider of " + impl;
+        }
+    }
 }

@@ -14,11 +14,11 @@ package net.expantra.smartypants.impl.live
     use namespace sp_internal;
 
     /**
-    * Keeps track of Live injections. Deserves to be its own class, agnabbit.
-    */
+     * Keeps track of Live injections. Deserves to be its own class, agnabbit.
+     */
     public class LiveInjectionManager
     {
-        private var log : ILogger = SPLoggingUtil.getDefaultLogger(this);
+        private var log:ILogger = SPLoggingUtil.getDefaultLogger(this);
 
         //--------------------------------------------------------------------------
         //
@@ -27,14 +27,14 @@ package net.expantra.smartypants.impl.live
         //--------------------------------------------------------------------------
 
         /**
-        * Maps hostEventDistpatcher -> Array of SourceEntry objects
-        */
-        private var sources : Dictionary;
+         * Maps hostEventDistpatcher -> Array of SourceEntry objects
+         */
+        private var sources:Dictionary;
 
         /**
-        * Maps destinationObject -> Array of destinationEntry objects
-        */
-        private var destinations : Dictionary;
+         * Maps destinationObject -> Array of destinationEntry objects
+         */
+        private var destinations:Dictionary;
 
         //--------------------------------------------------------------------------
         //
@@ -54,26 +54,27 @@ package net.expantra.smartypants.impl.live
         //
         //--------------------------------------------------------------------------
 
-        sp_internal function registerSource(forClass : Class, forName : String, host : Object, chain : Object) : Provider
+        sp_internal function registerSource(forClass:Class, forName:String, host:Object, chain:Object):Provider
         {
-            log.debug("Registering updating source for class " + getQualifiedClassName(forClass) + ", named \"" + forName + "\", host is \"" + host + "\"");
+            log.debug("Registering updating source for class " + getQualifiedClassName(forClass) + ", named \"" + forName + "\", host is \"" +
+                      host + "\"");
 
             //Magicvalue is our identifier for a class + name combo
-            var magicValue : String = getMagicValue(forClass, forName);
+            var magicValue:String = getMagicValue(forClass, forName);
 
             //Remove any existing source for this name/class pair
             removeSource(magicValue);
 
             //We don't do this inline, because we want the smallest scope closure possible to cut down on memory use while our listener is alive
-            var notifierFunction : Function = Helpers.createNotifierFunction(magicValue, host);
+            var notifierFunction:Function = Helpers.createNotifierFunction(magicValue, host);
 
             //Our chain watcher
-            var watcher : ChangeWatcher = ChangeWatcher.watch(host, chain, notifierFunction);
+            var watcher:ChangeWatcher = ChangeWatcher.watch(host, chain, notifierFunction);
 
             //Make sure we don't double-up on event listeners
-            var dispatcher : IEventDispatcher = IEventDispatcher(host);
+            var dispatcher:IEventDispatcher = IEventDispatcher(host);
 
-            var eventType : String = "updated_" + magicValue;
+            var eventType:String = "updated_" + magicValue;
 
             dispatcher.removeEventListener(eventType, receiveUpdateEvent, false);
             dispatcher.addEventListener(eventType, receiveUpdateEvent, false, 0, true); //Use weak reference
@@ -83,31 +84,31 @@ package net.expantra.smartypants.impl.live
             return new LiveProvider(this.getCurrentValue, magicValue);
         }
 
-        sp_internal function registerDestination(forClass : Class, forName : String, destination : Object, propertyKey : *) : void
+        sp_internal function registerDestination(forClass:Class, forName:String, destination:Object, propertyKey:*):void
         {
-            log.debug("Registering destination for class " + getQualifiedClassName(forClass) +
-                ", name =\"" + forName + "\" into \"" + propertyKey + "\" on a " + getQualifiedClassName(destination));
+            log.debug("Registering destination for class " + getQualifiedClassName(forClass) + ", name =\"" + forName + "\" into \"" + propertyKey +
+                      "\" on a " + getQualifiedClassName(destination));
 
-            var magicValue : String = getMagicValue(forClass, forName);
+            var magicValue:String = getMagicValue(forClass, forName);
 
             addDestinationEntry(destination, new DestinationEntry(magicValue, propertyKey));
         }
 
         /**
-        * Called by the injector whenever a rule is updated, so we can go through and notify anything that's listening for this key.
-        * This allows live Injections to be notified of non-live normal injector rules, but only when the rule is created of course!
-        */
-        sp_internal function manualUpdateNotification(criteria : InjectorCriteria, provider : Provider) : void
+         * Called by the injector whenever a rule is updated, so we can go through and notify anything that's listening for this key.
+         * This allows live Injections to be notified of non-live normal injector rules, but only when the rule is created of course!
+         */
+        sp_internal function manualUpdateNotification(criteria:InjectorCriteria, provider:Provider):void
         {
             updateTargets_work(getMagicValue(criteria.forClass, criteria.forName), null, provider);
         }
 
         /**
-        * Gets the current value for a magicValue key - used only by LiveProvider!
-        */
-        sp_internal function getCurrentValue(magicValue : String) : *
+         * Gets the current value for a magicValue key - used only by LiveProvider!
+         */
+        sp_internal function getCurrentValue(magicValue:String):*
         {
-            var entry : SourceEntry = getSourceEntry(magicValue);
+            var entry:SourceEntry = getSourceEntry(magicValue);
             return entry ? entry.changeWatcher.getValue() : null;
         }
 
@@ -118,9 +119,9 @@ package net.expantra.smartypants.impl.live
         //--------------------------------------------------------------------------
 
         /**
-        * Adds a source
-        */
-        private function addSourceEntry(host : Object, entry : SourceEntry) : void
+         * Adds a source
+         */
+        private function addSourceEntry(host:Object, entry:SourceEntry):void
         {
             if (!(host in sources))
                 sources[host] = [];
@@ -129,9 +130,9 @@ package net.expantra.smartypants.impl.live
         }
 
         /**
-        * Adds a destination record
-        */
-        private function addDestinationEntry(destination : Object, entry : DestinationEntry) : void
+         * Adds a destination record
+         */
+        private function addDestinationEntry(destination:Object, entry:DestinationEntry):void
         {
             if (!(destination in destinations))
                 destinations[destination] = [];
@@ -140,12 +141,12 @@ package net.expantra.smartypants.impl.live
         }
 
         /**
-        * When passed a key, returns the SourceEntry should it exist
-        */
-        private function getSourceEntry(magicValue : String) : SourceEntry
+         * When passed a key, returns the SourceEntry should it exist
+         */
+        private function getSourceEntry(magicValue:String):SourceEntry
         {
-            var hostEntry : Array;
-            var entry : SourceEntry;
+            var hostEntry:Array;
+            var entry:SourceEntry;
 
             for each (hostEntry in sources)
             {
@@ -160,19 +161,19 @@ package net.expantra.smartypants.impl.live
         }
 
         /**
-        * When passed a key, returns the host object
-        */
-        private function getHost(magicValue : String) : Object
+         * When passed a key, returns the host object
+         */
+        private function getHost(magicValue:String):Object
         {
-            var host : Object;
-            var entry : SourceEntry;
+            var host:Object;
+            var entry:SourceEntry;
 
             for (host in sources)
             {
                 for each (entry in sources[host])
                 {
                     if (entry.magicValue == magicValue)
-                       return host;
+                        return host;
                 }
             }
 
@@ -180,18 +181,18 @@ package net.expantra.smartypants.impl.live
         }
 
         /**
-        * Find any listeners for this key and re-set their injected field!
-        *
-        * If provider != null, newValue is ignored!
-        */
-        private function updateTargets_work(magicValue : String, newValue : *, provider : Provider = null) : void
+         * Find any listeners for this key and re-set their injected field!
+         *
+         * If provider != null, newValue is ignored!
+         */
+        private function updateTargets_work(magicValue:String, newValue:*, provider:Provider = null):void
         {
             log.debug("Updating listeners for " + magicValue);
 
             try
             {
-                var destination : Object;
-                var entry : DestinationEntry;
+                var destination:Object;
+                var entry:DestinationEntry;
 
                 for (destination in destinations)
                 {
@@ -204,27 +205,27 @@ package net.expantra.smartypants.impl.live
                     }
                 }
             }
-            catch (err : *)
+            catch (err:*)
             {
                 log.error("When updating listeners, I got an error. Who knows how many got what they need?" + err);
             }
         }
 
         /**
-        * Triggered by the anonymous handler function in changewatchers. This is how we avoid a hard reference from the source object to
-        * this manager. That wouldn't be *too* bad, as it's the reverse we're really trying to avoid. But we're trying to be as loose
-        * as possible with this class, so we might as well. It's only a 1-frame delay.
-        */
-        private function receiveUpdateEvent(event : LiveInjectionUpdatedEvent) : void
+         * Triggered by the anonymous handler function in changewatchers. This is how we avoid a hard reference from the source object to
+         * this manager. That wouldn't be *too* bad, as it's the reverse we're really trying to avoid. But we're trying to be as loose
+         * as possible with this class, so we might as well. It's only a 1-frame delay.
+         */
+        private function receiveUpdateEvent(event:LiveInjectionUpdatedEvent):void
         {
-            var magicValue : String = event["magicValue"];
+            var magicValue:String = event["magicValue"];
 
             if (!magicValue || magicValue.length == 0)
                 return;
 
             log.debug("Received notice that " + magicValue + " has updated!");
 
-            var entry : SourceEntry = getSourceEntry(magicValue);
+            var entry:SourceEntry = getSourceEntry(magicValue);
 
             if (entry)
                 updateTargets_work(magicValue, entry.changeWatcher.getValue());
@@ -233,9 +234,9 @@ package net.expantra.smartypants.impl.live
         }
 
         //Todo - put more thought into this perhaps...
-        private function getMagicValue(forClass : Class, forName : String) : String
+        private function getMagicValue(forClass:Class, forName:String):String
         {
-            var magic : String = getQualifiedClassName(forClass);
+            var magic:String = getQualifiedClassName(forClass);
 
             if (forName && forName != "")
                 magic += "." + forName;
@@ -243,9 +244,9 @@ package net.expantra.smartypants.impl.live
             return magic.replace(/[^a-zA-Z0-9.]/g, "_");
         }
 
-        private function removeSource(magicValue : String) : void
+        private function removeSource(magicValue:String):void
         {
-            var entry : SourceEntry = getSourceEntry(magicValue);
+            var entry:SourceEntry = getSourceEntry(magicValue);
 
             if (!entry)
                 return;
@@ -253,8 +254,8 @@ package net.expantra.smartypants.impl.live
             //Turn off the changewatcher. Removes all host -> watcher references.
             entry.changeWatcher.unwatch();
 
-            var host : Object = getHost(magicValue);
-            var dispatcher : IEventDispatcher = host as IEventDispatcher;
+            var host:Object = getHost(magicValue);
+            var dispatcher:IEventDispatcher = host as IEventDispatcher;
 
             if (dispatcher)
             {

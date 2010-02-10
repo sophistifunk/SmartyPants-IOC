@@ -17,12 +17,12 @@ package net.expantra.smartypants.extra
         //
         //--------------------------------------------------------------------------
 
-        public static function init(root : DisplayObject) : void
+        public static function init(root:DisplayObject):void
         {
             SPLoggingUtil.sp_internal::getDefaultLoggerWorkFunction = replacementGetDefaultLoggerWork;
         }
 
-        private static function replacementGetDefaultLoggerWork(name : String) : ILogger
+        private static function replacementGetDefaultLoggerWork(name:String):ILogger
         {
             return new NoSmartyPantsLogging(name);
         }
@@ -33,9 +33,9 @@ package net.expantra.smartypants.extra
         //
         //--------------------------------------------------------------------------
 
-        private var name : String;
+        private var name:String;
 
-        function NoSmartyPantsLogging(name : String) : void
+        function NoSmartyPantsLogging(name:String):void
         {
             this.name = name;
         }
@@ -46,16 +46,39 @@ package net.expantra.smartypants.extra
         //
         //--------------------------------------------------------------------------
 
-        public function get category() : String
+        public function get category():String
         {
             return name;
         }
 
-        public function log(level : int, message : String, ...rest) : void {;}
-        public function debug(message : String, ...rest) : void {;}
-        public function error(message : String, ...rest) : void {;}
-        public function fatal(message : String, ...rest) : void {;}
-        public function info(message : String, ...rest) : void {;}
-        public function warn(message : String, ...rest) : void {;}
+        public function log(level:int, message:String, ... rest):void
+        {
+            ;
+        }
+
+        public function debug(message:String, ... rest):void
+        {
+            ;
+        }
+
+        public function error(message:String, ... rest):void
+        {
+            ;
+        }
+
+        public function fatal(message:String, ... rest):void
+        {
+            ;
+        }
+
+        public function info(message:String, ... rest):void
+        {
+            ;
+        }
+
+        public function warn(message:String, ... rest):void
+        {
+            ;
+        }
     }
 }

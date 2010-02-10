@@ -5,6 +5,6 @@ package tests.support
     [Bindable]
     public class Host extends EventDispatcher
     {
-        public var string1 : String;
+        public var string1:String;
     }
 }

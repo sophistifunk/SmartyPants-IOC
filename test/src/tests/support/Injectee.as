@@ -8,39 +8,35 @@ package tests.support
     public class Injectee
     {
         [Inject]
-        public var injector : Injector;
+        public var injector:Injector;
 
         [Inject]
-        public var button : Button;
+        public var button:Button;
 
         [Inject(name="foo")]
-        public var stringNamedFoo : String;
+        public var stringNamedFoo:String;
 
         [Inject(type="String", name="foo")]
-        public var stringNamedFooProvider : Provider;
+        public var stringNamedFooProvider:Provider;
 
         [Inject(name="live1", live)]
-        public var l1 : String;
+        public var l1:String;
 
         [Inject(name="live2", live)]
-        public var l2 : String;
+        public var l2:String;
 
-        public var setupWasCalled : Boolean = false;
+        public var setupWasCalled:Boolean = false;
 
-        public var setupInjector : Injector;
+        public var setupInjector:Injector;
 
         [InjectInto]
-        public var subInjectee : SubInjectee = new SubInjectee();
+        public var subInjectee:SubInjectee = new SubInjectee();
 
         [InjectIntoContents]
-        public var subInjectees : Array = [new SubInjectee(),
-                                           new SubInjectee(),
-                                           new SubInjectee(),
-                                           new SubInjectee(),
-                                           new SubInjectee()];
+        public var subInjectees:Array = [new SubInjectee(), new SubInjectee(), new SubInjectee(), new SubInjectee(), new SubInjectee()];
 
         [PostConstruct]
-        public function setup(injector : Injector) : void
+        public function setup(injector:Injector):void
         {
             setupWasCalled = true;
             setupInjector = injector;

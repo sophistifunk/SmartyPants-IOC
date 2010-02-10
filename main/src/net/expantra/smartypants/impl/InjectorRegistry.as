@@ -4,20 +4,20 @@ package net.expantra.smartypants.impl
 
     public class InjectorRegistry
     {
-        private static const ID_SEED_SEED : Number = 123;
-        private static var idSeed : Number = ID_SEED_SEED;
+        private static const ID_SEED_SEED:Number = 123;
+        private static var idSeed:Number = ID_SEED_SEED;
 
-        private const allInjectors : Dictionary = new Dictionary(true);
+        private const allInjectors:Dictionary = new Dictionary(true);
 
         //Objects that have been injected into
-        private const allInjectees : Dictionary = new Dictionary(true);
+        private const allInjectees:Dictionary = new Dictionary(true);
 
         //Objects that have an associated injector (may not have been injected yet though)
-        private const allAssociatedObjects : Dictionary = new Dictionary(true);
+        private const allAssociatedObjects:Dictionary = new Dictionary(true);
 
-        private function getInjectorId(injector : InjectorImpl) : Number
+        private function getInjectorId(injector:InjectorImpl):Number
         {
-            for (var testee : * in allInjectors)
+            for (var testee:*in allInjectors)
             {
                 if (testee === injector)
                 {
@@ -30,7 +30,7 @@ package net.expantra.smartypants.impl
             return idSeed;
         }
 
-        private function getInjectorIdForInstance(instance : Object) : Number
+        private function getInjectorIdForInstance(instance:Object):Number
         {
             if (instance in allAssociatedObjects)
                 return allAssociatedObjects[instance];
@@ -42,7 +42,7 @@ package net.expantra.smartypants.impl
          * @private
          * Register the injector <-> injectee relationship (and flag the injection as having begun)
          */
-        sp_internal function registerInjection(injector : InjectorImpl, injectee : Object) : void
+        sp_internal function registerInjection(injector:InjectorImpl, injectee:Object):void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
             allInjectees[injectee] = getInjectorId(injector);
@@ -52,7 +52,7 @@ package net.expantra.smartypants.impl
          * @private
          * Register the injector <-> associated object relationship (does not flag the injection as having begun)
          */
-        sp_internal function registerAssociation(injector : InjectorImpl, injectee : Object) : void
+        sp_internal function registerAssociation(injector:InjectorImpl, injectee:Object):void
         {
             allAssociatedObjects[injectee] = getInjectorId(injector);
         }
@@ -61,7 +61,7 @@ package net.expantra.smartypants.impl
          * @private
          * Has the instance been injected into?
          */
-        sp_internal function alreadyInjected(instance : Object) : Boolean
+        sp_internal function alreadyInjected(instance:Object):Boolean
         {
             return instance in allInjectees;
         }
@@ -70,7 +70,7 @@ package net.expantra.smartypants.impl
          * @private
          * Has the instance been associated with an injector?
          */
-        sp_internal function hasInjector(instance : Object) : Boolean
+        sp_internal function hasInjector(instance:Object):Boolean
         {
             return (instance in allInjectees) || (instance in allAssociatedObjects);
         }
@@ -81,13 +81,13 @@ package net.expantra.smartypants.impl
          *
          * @return The InjectorImpl responsible, or null if not found.
          */
-        sp_internal function getInjectorFor(instance : Object) : InjectorImpl
+        sp_internal function getInjectorFor(instance:Object):InjectorImpl
         {
-            var id : Number = getInjectorIdForInstance(instance);
+            var id:Number = getInjectorIdForInstance(instance);
 
             if (id > 0)
             {
-                for (var testee : * in allInjectors)
+                for (var testee:*in allInjectors)
                 {
                     if (allInjectors[testee] == id)
                     {
@@ -104,7 +104,7 @@ package net.expantra.smartypants.impl
          * Notify the registry about the creation of an injector
          * @param instance
          */
-        sp_internal function injectorCreated(instance : InjectorImpl) : void
+        sp_internal function injectorCreated(instance:InjectorImpl):void
         {
             getInjectorId(instance);
         }
@@ -115,16 +115,16 @@ package net.expantra.smartypants.impl
          * @return
          *
          */
-        sp_internal function get status() : String
+        sp_internal function get status():String
         {
-            var injectorCount : Number = 0;
-            var injecteeCount : Number = 0;
-            var assosciateCount : Number = 0;
+            var injectorCount:Number = 0;
+            var injecteeCount:Number = 0;
+            var assosciateCount:Number = 0;
 
-            var minId : Number = Number.MAX_VALUE;
-            var maxId : Number = Number.MIN_VALUE;
+            var minId:Number = Number.MAX_VALUE;
+            var maxId:Number = Number.MIN_VALUE;
 
-            for (var obj : * in allInjectors)
+            for (var obj:*in allInjectors)
             {
                 injectorCount++;
                 minId = Math.min(minId, allInjectors[obj]);
@@ -149,21 +149,21 @@ package net.expantra.smartypants.impl
                 return "This registry counts 0 injectors";
 
             if (injectorCount == 1)
-                return "This registry counts 1 injector with " + injecteeCount + " injectees, and "
-                   + assosciateCount + " associated Objects. Injector Id is " + minId
+                return "This registry counts 1 injector with " + injecteeCount + " injectees, and " + assosciateCount + " associated Objects. Injector Id is " +
+                    minId
 
-            return "This registry counts " + injectorCount + " injectors, " + injecteeCount + " injectees, and "
-                   + assosciateCount + " associated Objects. Injector Ids range from " + minId + " to " + maxId;
+            return "This registry counts " + injectorCount + " injectors, " + injecteeCount + " injectees, and " + assosciateCount + " associated Objects. Injector Ids range from " +
+                minId + " to " + maxId;
         }
 
         /**
          * How many injectors exist?
          */
-        sp_internal function get numberOfInjectors() : Number
+        sp_internal function get numberOfInjectors():Number
         {
-            var injectorCount : Number = 0;
+            var injectorCount:Number = 0;
 
-            for (var obj : * in allInjectors)
+            for (var obj:*in allInjectors)
             {
                 injectorCount++;
             }

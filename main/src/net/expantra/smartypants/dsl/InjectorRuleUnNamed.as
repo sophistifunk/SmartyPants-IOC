@@ -1,5 +1,6 @@
 package net.expantra.smartypants.dsl
 {
+
     public interface InjectorRuleUnNamed extends InjectorRuleNamed
     {
         /**
@@ -8,6 +9,6 @@ package net.expantra.smartypants.dsl
          * @parameter name A name to add to the criteria. Null (or not called) means "when no name is specified in the request",
          * "*" means "when any or no name is specified in the request". You may have named rules, with a fallback rule named "*".
          */
-        function named(name : String) : InjectorRuleNamed;
+        function named(name:String):InjectorRuleNamed;
     }
 }

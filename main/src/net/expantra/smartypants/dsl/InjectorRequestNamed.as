@@ -7,11 +7,11 @@ package net.expantra.smartypants.dsl
         /**
          * Returns actual instance
          */
-        function getInstance() : *;
+        function getInstance():*;
 
         /**
          * Returns a provider to be called later
          */
-        function getProvider() : Provider;
+        function getProvider():Provider;
     }
 }
