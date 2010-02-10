@@ -27,11 +27,11 @@ package tests
 
     public class SmartyPantsTestSuite extends TestCase implements IEventDispatcher
     {
-        private var injector : Injector;
+        private var injector:Injector;
 
-        private var _eventDispatcher : IEventDispatcher;
+        private var _eventDispatcher:IEventDispatcher;
 
-        private function get eventDispatcher() : IEventDispatcher
+        private function get eventDispatcher():IEventDispatcher
         {
             if (!_eventDispatcher)
                 _eventDispatcher = new EventDispatcher(this);
@@ -39,12 +39,13 @@ package tests
             return _eventDispatcher;
         }
 
-        public function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
+        public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean =
+                                         false):void
         {
             eventDispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
         }
 
-        public function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
+        public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
         {
             eventDispatcher.removeEventListener(type, listener, useCapture);
         }
@@ -64,7 +65,7 @@ package tests
             return eventDispatcher.willTrigger(type);
         }
 
-        override public function setUp() : void
+        override public function setUp():void
         {
             trace();
             trace("---- Begin Test ----");
@@ -73,7 +74,7 @@ package tests
             injector = SmartyPants.getInjectorFor(this);
         }
 
-        override public function tearDown() : void
+        override public function tearDown():void
         {
             trace("Teardown Begin: Status is", SmartyPants.status);
             injector = undefined;
@@ -92,49 +93,49 @@ package tests
             trace();
         }
 
-         public function testExistence() : void
+        public function testExistence():void
         {
             trace("testExistence");
 
             assertNotNull("No injector found!", injector);
         }
 
-        public function testSimpleRequests() : void
+        public function testSimpleRequests():void
         {
             trace("testSimpleRequests");
 
-            var button : * = injector.newRequest(this).forClass(Button).getInstance();
-            var panel : * = injector.newRequest(this).forClass(Panel).getInstance();
+            var button:* = injector.newRequest(this).forClass(Button).getInstance();
+            var panel:* = injector.newRequest(this).forClass(Panel).getInstance();
 
             assertTrue("Got the wrong item for button", button is Button);
             assertTrue("Got the wrong item for panel", panel is Panel);
         }
 
-        public function testSingletonAnnotation() : void
+        public function testSingletonAnnotation():void
         {
             trace("testSingletonAnnotation");
 
-            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
-            var provider : Provider = injector.newRequest(this).forClass(SingletonClass).getProvider();
+            var instance1:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var provider:Provider = injector.newRequest(this).forClass(SingletonClass).getProvider();
 
             assertTrue("instances should be strictly equal!", instance1 === instance2);
 
             assertTrue("provider must return same instance also", instance1 === provider.getInstance());
         }
 
-        public function testHasExplicitRule() : void
+        public function testHasExplicitRule():void
         {
-        	assertFalse("Injector should not yet have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
-        	assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
+            assertFalse("Injector should not yet have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
+            assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
 
-			injector.newRule().whenAskedFor(String).named("Bart").useValue("Homer's son");
+            injector.newRule().whenAskedFor(String).named("Bart").useValue("Homer's son");
 
-        	assertTrue("Injector should now have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
-        	assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
+            assertTrue("Injector should now have an explicit rule for String named \"Bart\".", injector.hasExplicitRuleFor(String, "Bart"));
+            assertFalse("Injector should not have an explicit rule for String named \"Homer\".", injector.hasExplicitRuleFor(String, "Homer"));
         }
 
-        public function testCantBindFooToFoo() : void
+        public function testCantBindFooToFoo():void
         {
             trace("testCantBindFooToFoo");
 
@@ -143,18 +144,18 @@ package tests
                 injector.newRule().whenAskedFor(SingletonClass).useClass(SingletonClass);
                 fail("Should not be able to bind SingletonClass to itself");
             }
-            catch (expected : Error)
+            catch (expected:Error)
             {
                 //...
             }
 
-            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance1:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
 
             assertTrue("instances should be equal!", instance1 == instance2);
         }
 
-        public function testSingletonAnnotationIsIgnoredWhenRulePresent2() : void
+        public function testSingletonAnnotationIsIgnoredWhenRulePresent2():void
         {
             trace("testSingletonAnnotationIsIgnoredWhenRulePresent2");
 
@@ -162,10 +163,10 @@ package tests
 
             //injector.newRule().whenAskedFor(SingletonClass).named("actuallyNotSingleton").createInstanceOf(SingletonClass);
 
-            var instance1 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
-            var instance2 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
-            var instance3 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
-            var instance4 : SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance1:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance2:SingletonClass = injector.newRequest(this).forClass(SingletonClass).getInstance();
+            var instance3:SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
+            var instance4:SingletonClass = injector.newRequest(this).forClass(SingletonClass).named("notSingleton").getInstance();
 
             assertTrue("instances should be strictly equal!", instance1 === instance2);
             assertTrue("instances should be strictly equal!", instance1 === instance3);
@@ -175,32 +176,32 @@ package tests
 //            assertFalse("instances should not be equal!", instance3 == instance4);
         }
 
-        public function testMultipleInjectorMode() : void
+        public function testMultipleInjectorMode():void
         {
             trace("testMultipleInjectorMode");
 
             SmartyPants.singleInjectorMode = false;
 
-        	var registeredInjector : Injector = SmartyPants.locateInjectorFor(this);
+            var registeredInjector:Injector = SmartyPants.locateInjectorFor(this);
 
-        	assertNull("There should not be a registered injector for this class", registeredInjector);
+            assertNull("There should not be a registered injector for this class", registeredInjector);
 
-        	try
-        	{
-        		SmartyPants.getInjectorFor(this);
-        		fail("We should get an exception when we call getInjectorFor(this)");
-        	}
-        	catch (ignored : *)
-        	{
-        		//Pass
-        	}
+            try
+            {
+                SmartyPants.getInjectorFor(this);
+                fail("We should get an exception when we call getInjectorFor(this)");
+            }
+            catch (ignored:*)
+            {
+                //Pass
+            }
         }
 
-        public function testSingleInjectorMode() : void
+        public function testSingleInjectorMode():void
         {
             trace("testSingleInjectorMode");
 
-            var injector : Injector = SmartyPants.locateInjectorFor(this);
+            var injector:Injector = SmartyPants.locateInjectorFor(this);
 
             assertNotNull("There be a 'registered' injector for this class", injector);
 
@@ -209,22 +210,22 @@ package tests
             assertNotNull("There be a fetchable injector for this class", injector);
         }
 
-        public function testFailureWhenRequestByNameWithoutMatchingRule() : void
+        public function testFailureWhenRequestByNameWithoutMatchingRule():void
         {
             trace("testFailureWhenRequestByNameWithoutMatchingRule");
 
             try
             {
-                var o : * = injector.newRequest(this).forClass(SingletonClass).named("nameHasNoRule").getInstance();
+                var o:* = injector.newRequest(this).forClass(SingletonClass).named("nameHasNoRule").getInstance();
                 fail("Expecting an exception when trying to get an instance by name without a valid rule");
             }
-            catch (ignored : *)
+            catch (ignored:*)
             {
                 //Pass
             }
         }
 
-        public function testFailurePopulatingInjecteeWithoutRules() : void
+        public function testFailurePopulatingInjecteeWithoutRules():void
         {
             trace("testFailurePopulatingInjecteeWithoutRules");
 
@@ -233,23 +234,23 @@ package tests
                 injector.newRequest(this).forClass(Injectee).getInstance();
                 fail("Injectee requires unresolveable dependencies, so should fail");
             }
-            catch (ignored : *)
+            catch (ignored:*)
             {
                 //Pass
             }
         }
 
-        public function testAnnotationsForInjectee() : void
+        public function testAnnotationsForInjectee():void
         {
             trace("testAnnotationsForInjectee");
 
-            const fooValue : String = "Foo Value " + Math.floor(Math.random() * 99999);
+            const fooValue:String = "Foo Value " + Math.floor(Math.random() * 99999);
 
             injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
             injector.newRule().whenAskedFor(String).named("purple").useValue(null);
             injector.newRule().whenAskedFor(Number).named("meaningOfLife").useValue(null);
 
-            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
+            var injectee:Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertEquals("stringNamedFoo not set correctly", fooValue, injectee.stringNamedFoo);
             assertEquals("stringNamedFooProvider not set correctly", fooValue, injectee.stringNamedFooProvider.getInstance());
@@ -257,24 +258,24 @@ package tests
             assertTrue("injectee.injector must be the injector", injectee.injector === injector);
         }
 
-        public function testLiveBindings() : void
+        public function testLiveBindings():void
         {
             trace("testLiveBindings");
 
-            const fooValue : String = "Foo Value " + Math.floor(Math.random() * 99999);
-            const fooValue2 : String = "Foo Value2 " + Math.floor(Math.random() * 99999);
-            const fooValue3 : String = "Foo Value3 " + Math.floor(Math.random() * 99999);
+            const fooValue:String = "Foo Value " + Math.floor(Math.random() * 99999);
+            const fooValue2:String = "Foo Value2 " + Math.floor(Math.random() * 99999);
+            const fooValue3:String = "Foo Value3 " + Math.floor(Math.random() * 99999);
 
             injector.newRule().whenAskedFor(String).named("foo").useValue(fooValue);
             injector.newRule().whenAskedFor(String).named("purple").useValue(null);
             injector.newRule().whenAskedFor(Number).named("meaningOfLife").useValue(null);
 
-            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
+            var injectee:Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertNull("String1 should be null initially", injectee.l1);
             assertNull("String2 should be null initially", injectee.l2);
 
-            var host : Host = new Host();
+            var host:Host = new Host();
 
             injector.newRule().whenAskedFor(String).named("live1").useValue(fooValue2);
 
@@ -290,7 +291,7 @@ package tests
             assertEquals("Value should be foo2", fooValue2, injectee.l2);
         }
 
-        public function testPostConstruct() : void
+        public function testPostConstruct():void
         {
             trace("testPostConstruct");
 
@@ -298,39 +299,39 @@ package tests
             injector.newRule().whenAskedFor(String).named("purple").useValue(null);
             injector.newRule().whenAskedFor(Number).named("meaningOfLife").useValue(null);
 
-            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
+            var injectee:Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertTrue("PostConstruct function was not called", injectee.setupWasCalled);
             assertEquals("Wrong injector value passed to injectee.setup()", injector, injectee.setupInjector);
         }
 
-        public function testInjectInto() : void
+        public function testInjectInto():void
         {
             trace("testInjectInto");
 
-            const str : String = "Purple's a fruit";
-            const liff : Number = 42;
+            const str:String = "Purple's a fruit";
+            const liff:Number = 42;
             injector.newRule().whenAskedFor(String).named("purple").useValue(str);
             injector.newRule().whenAskedFor(Number).named("meaningOfLife").useValue(liff);
             injector.newRule().whenAskedFor(String).named("foo").useValue(null);
 
-            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
+            var injectee:Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertEquals("[InjectInto] failed for subInjectee.isPurple", str, injectee.subInjectee.isPurple);
             assertEquals("Somebody call the mice!", liff, injectee.subInjectee.adamsConstant);
         }
 
-         public function testInjectIntoContents() : void
+        public function testInjectIntoContents():void
         {
             trace("testInjectIntoContents");
 
-            const str : String = "Purple's a fruit";
-            const liff : Number = 42;
+            const str:String = "Purple's a fruit";
+            const liff:Number = 42;
             injector.newRule().whenAskedFor(String).named("purple").useValue(str);
             injector.newRule().whenAskedFor(Number).named("meaningOfLife").useValue(liff);
             injector.newRule().whenAskedFor(String).named("foo").useValue(null);
 
-            var injectee : Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
+            var injectee:Injectee = injector.newRequest(this).forClass(Injectee).getInstance();
 
             assertEquals("[InjectInto] failed for subInjectees[0].isPurple", str, injectee.subInjectees[0].isPurple);
             assertEquals("[InjectInto] failed for subInjectees[1].isPurple", str, injectee.subInjectees[1].isPurple);
@@ -344,18 +345,18 @@ package tests
             assertEquals("Somebody call the mice! - 5", liff, injectee.subInjectees[4].adamsConstant);
         }
 
-        public function testRuleRemovalAndUpdate() : void
+        public function testRuleRemovalAndUpdate():void
         {
             trace("testRuleRemovalAndUpdate");
 
             injector.newRule().whenAskedFor(String).named("teddy").useValue("bear");
-            var shouldBeBear : String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
+            var shouldBeBear:String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
 
             injector.newRule().whenAskedFor(String).named("teddy").useValue("Roosevelt");
-            var shouldBeRoosevelt : String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
+            var shouldBeRoosevelt:String = SmartyPants.newRequest(this).forClass(String).named("teddy").getInstance();
 
             injector.newRule().whenAskedFor(String).named("teddy").defaultBehaviour();
-            var shouldBeNull : String;
+            var shouldBeNull:String;
 
             try
             {

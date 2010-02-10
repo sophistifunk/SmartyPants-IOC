@@ -20,7 +20,7 @@ package net.expantra.smartypants.impl
 
     public class InjectorImpl implements Injector
     {
-        private var log : ILogger = SPLoggingUtil.getDefaultLogger(this);
+        private var log:ILogger = SPLoggingUtil.getDefaultLogger(this);
 
         //--------------------------------------------------------------------------
         //
@@ -32,14 +32,14 @@ package net.expantra.smartypants.impl
         //  Bindings
         //----------------------------------
 
-        private var criteriaList : Array = [];
-        private var providerList : Array = [];
+        private var criteriaList:Array = [];
+        private var providerList:Array = [];
 
         //----------------------------------
         //  Manages our live injections
         //----------------------------------
 
-        private var _liveInjectionManager : LiveInjectionManager;
+        private var _liveInjectionManager:LiveInjectionManager;
 
         //--------------------------------------------------------------------------
         //
@@ -62,7 +62,7 @@ package net.expantra.smartypants.impl
         /**
          * Create an InjectorRequest.
          */
-        public function newRequest(injectee : Object) : InjectorRequestRoot
+        public function newRequest(injectee:Object):InjectorRequestRoot
         {
             return new RequestImpl(this, injectee);
         }
@@ -70,7 +70,7 @@ package net.expantra.smartypants.impl
         /**
          * Create an InjectorRule
          */
-        public function newRule() : InjectorRuleRoot
+        public function newRule():InjectorRuleRoot
         {
             return new RuleImpl(this);
         }
@@ -78,15 +78,23 @@ package net.expantra.smartypants.impl
         /**
          * Manually request injection into an object
          */
-        public function injectInto(targetInstance : Object) : void
+        public function injectInto(targetInstance:Object):void
         {
             injectIntoWork(targetInstance);
         }
 
         /**
-        * Does actual injection
-        */
-        private function injectIntoWork(targetInstance : Object) : void
+         * @inheritDoc
+         */
+        public function hasExplicitRuleFor(clazz:Class, named:String = null):Boolean
+        {
+            throw new Error("TODO!");
+        }
+
+        /**
+         * Does actual injection
+         */
+        private function injectIntoWork(targetInstance:Object):void
         {
             if (targetInstance == null || targetInstance is Date || Reflection.isSimpleType(targetInstance))
                 return;
@@ -104,75 +112,78 @@ package net.expantra.smartypants.impl
                 //Find any [InjectInto] decorations to inject into non-injected values.
                 injectIntoExistingMembers(targetInstance);
             }
-            catch (e : Error)
+            catch (e:Error)
             {
                 log.error("{0} {1}", e, e.getStackTrace());
-                throw new Error("Could not inject dependencies into an instance of " + getQualifiedClassName(targetInstance) + " because of " + e);
+                throw new Error("Could not inject dependencies into an instance of " + getQualifiedClassName(targetInstance) + " because of " +
+                                e);
             }
 
             try
             {
                 findAndExecutePostConstruct(targetInstance);
             }
-            catch (e : Error)
+            catch (e:Error)
             {
                 log.error("{0} {1}", e, e.getStackTrace());
-                throw new Error("Could not execute [PostConstruct] function on a " + getQualifiedClassName(targetInstance) + " because of " + e);
+                throw new Error("Could not execute [PostConstruct] function on a " + getQualifiedClassName(targetInstance) + " because of " +
+                                e);
             }
         }
 
-        private function findAndExecutePostConstruct(injectee : Object) : void
+        private function findAndExecutePostConstruct(injectee:Object):void
         {
-            var functionsToExecute : XMLList = Reflection.filterMembersByMetadataName(Reflection.getFunctions(injectee), "PostConstruct");
+            var functionsToExecute:XMLList = Reflection.filterMembersByMetadataName(Reflection.getFunctions(injectee), "PostConstruct");
 
             log.debug("Injectee {0} has {1} [PostConstruct] function(s)", injectee, functionsToExecute.length());
 
-            for each (var functionNode : XML in functionsToExecute)
+            for each (var functionNode:XML in functionsToExecute)
             {
-                var functionName : String = String(functionNode.@name);
+                var functionName:String = String(functionNode.@name);
                 log.debug("Found [PostConstruct] method {0}, about to invoke", functionName);
                 injectee[functionName](this);
             }
         }
 
         /**
-        * Set fields
-        */
-        private function injectValuesIntoFields(targetInstance : Object) : void
+         * Set fields
+         */
+        private function injectValuesIntoFields(targetInstance:Object):void
         {
-            var writeableProperties : XMLList = Reflection.getWriteablePropertyDescriptions(targetInstance);
-            var injectionPointList : XMLList = Reflection.filterMembersByMetadataName(writeableProperties, "Inject");
+            var writeableProperties:XMLList = Reflection.getWriteablePropertyDescriptions(targetInstance);
+            var injectionPointList:XMLList = Reflection.filterMembersByMetadataName(writeableProperties, "Inject");
 
             log.debug("The object ({0}) has {1} injection points.", targetInstance, injectionPointList.length());
 
-            var injectionPoint : XML;
-            for each(injectionPoint in injectionPointList)
+            var injectionPoint:XML;
+            for each (injectionPoint in injectionPointList)
             {
                 //Gather some intel...
 
-                var injectionMetadata : XMLList = injectionPoint..metadata.(attribute("name") == "Inject");
+                var injectionMetadata:XMLList = injectionPoint..metadata.(attribute("name") == "Inject");
 
                 if (injectionMetadata.length() == 0)
                     continue;
 
-                var fieldName : * = Reflection.getPropertyName(injectionPoint);
+                var fieldName:* = Reflection.getPropertyName(injectionPoint);
 
-                var fieldType : String = injectionPoint.@type;
+                var fieldType:String = injectionPoint.@type;
                 if (fieldType == "*")
                     fieldType = "Object";
 
-                var tmp : * = injectionMetadata.child("arg");
+                var tmp:* = injectionMetadata.child("arg");
                 tmp = tmp.(attribute("key") == "type");
 
-                var injectionType : String = tmp.attribute("value");
+                var injectionType:String = tmp.attribute("value");
                 if (injectionType == "*")
                     injectionType = "Object";
 
-                var injectionName : String = injectionMetadata.child("arg").(attribute("key") == "name").attribute("value");
+                var injectionName:String = injectionMetadata.child("arg").(attribute("key") == "name").attribute("value");
 
-                var providerInjection : Boolean = Reflection.classExtendsOrImplements(fieldType, Provider);
+                var providerInjection:Boolean = Reflection.classExtendsOrImplements(fieldType, Provider);
 
-                var liveInjection : Boolean = injectionMetadata.child("arg").(attribute("key") == "" && attribute("value") == "live").length() > 0;
+                var liveInjection:Boolean = injectionMetadata.child("arg").(attribute("key") == "" && attribute("value") == "live").length() >
+                    0;
 
                 //Clean up some string fields. Might not be necessary.
 
@@ -182,28 +193,28 @@ package net.expantra.smartypants.impl
                 if (injectionType == "")
                     injectionType = null;
 
-                log.debug("Attempting to find a value for the field named " + fieldName + ", which is a " + fieldType
-                          + ". injectionType = " + injectionType + ", injectionName = " + injectionName);
+                log.debug("Attempting to find a value for the field named " + fieldName + ", which is a " + fieldType + ". injectionType = " +
+                          injectionType + ", injectionName = " + injectionName);
 
                 //Get a reference to the injected class type
 
-                var actualClassToInject : Class;
+                var actualClassToInject:Class = resolveClassByName(injectionType);
 
                 try
                 {
                     actualClassToInject = Class(getDefinitionByName(injectionType ? injectionType : fieldType));
                 }
-                catch (e : Error)
+                catch (e:Error)
                 {
-                    throw new Error("While trying to inject the value for the field named \"" + fieldName + "\", I could not lookup the class " + (injectionType ? injectionType : fieldType)
-                                    + ", due to " + e + "\n" + e.getStackTrace());
+                    throw new Error("While trying to inject the value for the field named \"" + fieldName + "\", I could not lookup the class " +
+                                    (injectionType ? injectionType : fieldType) + ", due to " + e + "\n" + e.getStackTrace());
                 }
 
-                var criteria : InjectorCriteria = new InjectorCriteria(actualClassToInject, injectionName);
+                var criteria:InjectorCriteria = new InjectorCriteria(actualClassToInject, injectionName);
 
                 //Lookup our value
 
-                var valueToInject : Object = null;
+                var valueToInject:Object = null;
 
                 if (actualClassToInject == Injector || actualClassToInject == InjectorImpl) //Request for the injector itself?
                 {
@@ -215,7 +226,7 @@ package net.expantra.smartypants.impl
 
                     liveInjectionManager.registerDestination(actualClassToInject, injectionName, targetInstance, fieldName);
 
-                    var provider : Provider = lookupProviderForCriteria(criteria);
+                    var provider:Provider = lookupProviderForCriteria(criteria);
 
                     if (provider)
                     {
@@ -255,8 +266,8 @@ package net.expantra.smartypants.impl
 
                 //Set the field.
 
-                log.debug("Attempting to set the field named " + fieldName + ", which is a " + fieldType
-                          + ". injectionType = " + injectionType + ", injectionName = " + injectionName);
+                log.debug("Attempting to set the field named " + fieldName + ", which is a " + fieldType + ". injectionType = " + injectionType +
+                          ", injectionName = " + injectionName);
                 log.debug("valueToInject = " + valueToInject);
 
                 targetInstance[fieldName] = valueToInject;
@@ -264,21 +275,21 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Interrogate metadata, and call injectInto() on anything decorated as requesting ig
-        */
-        private function injectIntoExistingMembers(parentInstance : Object) : void
+         * Interrogate metadata, and call injectInto() on anything decorated as requesting ig
+         */
+        private function injectIntoExistingMembers(parentInstance:Object):void
         {
-            var readableProperties : XMLList = Reflection.getReadablePropertyDescriptions(parentInstance);
+            var readableProperties:XMLList = Reflection.getReadablePropertyDescriptions(parentInstance);
 
             //Simple [InjectInto] for instances
 
-            var injectIntoTargets : XMLList = Reflection.filterMembersByMetadataName(readableProperties, "InjectInto");
+            var injectIntoTargets:XMLList = Reflection.filterMembersByMetadataName(readableProperties, "InjectInto");
 
-            var fieldDescription : XML;
+            var fieldDescription:XML;
 
             for each (fieldDescription in injectIntoTargets)
             {
-                var fieldName : * = Reflection.getPropertyName(fieldDescription);
+                var fieldName:* = Reflection.getPropertyName(fieldDescription);
 
                 log.debug("Found [InjectInto] on field " + fieldName);
 
@@ -295,7 +306,7 @@ package net.expantra.smartypants.impl
 
                 log.debug("Found [InjectIntoContents] on field " + fieldName);
 
-                for each (var target : Object in parentInstance[fieldName])
+                for each (var target:Object in parentInstance[fieldName])
                 {
                     injectIntoWork(target);
                 }
@@ -308,17 +319,17 @@ package net.expantra.smartypants.impl
         //
         //--------------------------------------------------------------------------
 
-        private var safeGuard : Object = {};
+        private var safeGuard:Object = {};
 
         /**
-        * Action a request for an instance
-        */
-        sp_internal function fulfilRequest(request : InjectorCriteria, injectee : Object) : Object
+         * Action a request for an instance
+         */
+        sp_internal function fulfilRequest(request:InjectorCriteria, injectee:Object):Object
         {
             //Injectee is currently ignored, until we have "contexts" to solve the robot-legs problem
 
             //Some checks to keep us away from Apple headquarters.
-            var idString : String = request.toString();
+            var idString:String = request.toString();
 
             if (idString in safeGuard)
             {
@@ -330,9 +341,9 @@ package net.expantra.smartypants.impl
 
             try
             {
-                var result : Object = fulfilRequestWork(request);
+                var result:Object = fulfilRequestWork(request);
             }
-            catch(e:Error)
+            catch (e:Error)
             {
                 log.error("Attempting to fulfil request, got {0}", e.getStackTrace());
                 throw e;
@@ -345,10 +356,10 @@ package net.expantra.smartypants.impl
             return result;
         }
 
-        private function fulfilRequestWork(request : InjectorCriteria) : Object
+        private function fulfilRequestWork(request:InjectorCriteria):Object
         {
             //Do we have a rule that matches our criteria?
-            var provider : Provider = lookupProviderForCriteria(request);
+            var provider:Provider = lookupProviderForCriteria(request);
 
             log.debug("requested: {0}, existing provider is {1}", request, provider ? provider : "not found");
 
@@ -361,11 +372,11 @@ package net.expantra.smartypants.impl
 
             //We have a valid unbound request for an instance. Attempt to create it!
 
-            var instance : Object = null;
+            var instance:Object = null;
 
             if (Reflection.isInterface(request.forClass))
             {
-                var errorMessage : String = "Could not fulfil the request for " + request + " because it is an interface and no rule was found to construct it.";
+                var errorMessage:String = "Could not fulfil the request for " + request + " because it is an interface and no rule was found to construct it.";
                 log.error(errorMessage);
                 throw new Error(errorMessage);
             }
@@ -376,7 +387,7 @@ package net.expantra.smartypants.impl
 
                 instance = doDefaultInstantiation(request);
             }
-            catch (e : Error)
+            catch (e:Error)
             {
                 log.error("Could not fulfil the request for {0} due to {1} at {2}", request, e, e.getStackTrace());
                 throw new Error("Could not fulfil the request for " + request + " due to " + e + "\n" + e.getStackTrace());
@@ -388,9 +399,9 @@ package net.expantra.smartypants.impl
         /**
          * The default behaviour when attempting to inject an unnamed class when no rule is found.
          */
-        private function doDefaultInstantiation(request : InjectorCriteria) : Object
+        private function doDefaultInstantiation(request:InjectorCriteria):Object
         {
-            var instance : Object;
+            var instance:Object;
 
             //Step 1. Instantiate it
             instance = instantiate(request.forClass);
@@ -410,20 +421,20 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Looks for a matching rule, returns the bound provider, or null if none found
-        */
-        sp_internal function lookupProviderForCriteria(requestCriteria : InjectorCriteria) : Provider
+         * Looks for a matching rule, returns the bound provider, or null if none found
+         */
+        sp_internal function lookupProviderForCriteria(requestCriteria:InjectorCriteria):Provider
         {
-            function matchingCriteriaFilter(rule : InjectorCriteria, ...ignored) : Boolean
+            function matchingCriteriaFilter(rule:InjectorCriteria, ... ignored):Boolean
             {
                 return InjectorCriteria.match(rule, requestCriteria);
             }
 
-            var matchingCriteria : Array = criteriaList.filter(matchingCriteriaFilter);
+            var matchingCriteria:Array = criteriaList.filter(matchingCriteriaFilter);
 
             //Search for an exact match first, as they're higher precedence than wildcard
 
-            switch(matchingCriteria.length)
+            switch (matchingCriteria.length)
             {
                 case 0: //No match
                     return null;
@@ -432,8 +443,8 @@ package net.expantra.smartypants.impl
                     return providerList[criteriaList.indexOf(matchingCriteria[0])];
 
                 case 2: //Two matches. Check if #1 is exact, if not return #0
-                    return InjectorCriteria.exactMatch(matchingCriteria[1], requestCriteria) ? providerList[criteriaList.indexOf(matchingCriteria[1])]
-                                                                                             : providerList[criteriaList.indexOf(matchingCriteria[0])];
+                    return InjectorCriteria.exactMatch(matchingCriteria[1], requestCriteria) ? providerList[criteriaList.indexOf(matchingCriteria[1])] :
+                        providerList[criteriaList.indexOf(matchingCriteria[0])];
 
                 default: //Should never happen!
                     throw new Error("Internal error! We should only ever have zero, one, or two matching rules!");
@@ -441,11 +452,11 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Bind a rule to a provider
-        */
-        sp_internal function bindProvider(provider : Provider, ruleCriteria : InjectorCriteria) : void
+         * Bind a rule to a provider
+         */
+        sp_internal function bindProvider(provider:Provider, ruleCriteria:InjectorCriteria):void
         {
-            var existingIndex : Number = findExactMatchIndex(ruleCriteria);
+            var existingIndex:Number = findExactMatchIndex(ruleCriteria);
 
             //Make note of this binding...
 
@@ -479,9 +490,9 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Bind a rule to an instance (akin to Guice' singleton scope)
-        */
-        sp_internal function bindInstance(instance : Object, criteria : InjectorCriteria) : void
+         * Bind a rule to an instance (akin to Guice' singleton scope)
+         */
+        sp_internal function bindInstance(instance:Object, criteria:InjectorCriteria):void
         {
             bindProvider(new InstanceProvider(instance), criteria);
 
@@ -490,21 +501,21 @@ package net.expantra.smartypants.impl
         }
 
         /**
-        * Bind a rule to a bindable property chain, the source-half of live injection
-        */
-        sp_internal function bindPropertyChain(host : IEventDispatcher, chain : Object, criteria : InjectorCriteria) : void
+         * Bind a rule to a bindable property chain, the source-half of live injection
+         */
+        sp_internal function bindPropertyChain(host:IEventDispatcher, chain:Object, criteria:InjectorCriteria):void
         {
             //Notify our manager (and get the provider)
-            var provider : Provider = liveInjectionManager.registerSource(criteria.forClass, criteria.forName, host, chain);
+            var provider:Provider = liveInjectionManager.registerSource(criteria.forClass, criteria.forName, host, chain);
 
             //Register a normal provider (for non-live injections of the current value of any live rule)
             bindProvider(provider, criteria);
         }
 
         /**
-        * Performs actual instantiation - This is where we'll be doing our constructor injection soon!
-        */
-        sp_internal function instantiate(clazz : Class) : *
+         * Performs actual instantiation - This is where we'll be doing our constructor injection soon!
+         */
+        sp_internal function instantiate(clazz:Class):*
         {
             return new clazz();
         }
@@ -513,9 +524,9 @@ package net.expantra.smartypants.impl
          * Clears a rule.
          * @param criteria criteria for which we want to remove any rule that exists.
          */
-        sp_internal function removeRule(criteria : InjectorCriteria) : void
+        sp_internal function removeRule(criteria:InjectorCriteria):void
         {
-            var existingIndex : Number = findExactMatchIndex(criteria);
+            var existingIndex:Number = findExactMatchIndex(criteria);
 
             if (existingIndex >= 0)
             {
@@ -532,14 +543,14 @@ package net.expantra.smartypants.impl
         //--------------------------------------------------------------------------
 
         /**
-        * Looks for an exact name + class criteria match
-        *
-        * @return an index into the internal stores, or -1 if not found.
-        */
-        private function findExactMatchIndex(criteria : InjectorCriteria) : Number
+         * Looks for an exact name + class criteria match
+         *
+         * @return an index into the internal stores, or -1 if not found.
+         */
+        private function findExactMatchIndex(criteria:InjectorCriteria):Number
         {
-            var testee : InjectorCriteria;
-            var i : Number;
+            var testee:InjectorCriteria;
+            var i:Number;
 
             for (i = 0; i < criteriaList.length; i++)
             {
@@ -554,7 +565,7 @@ package net.expantra.smartypants.impl
             return -1;
         }
 
-        private function get liveInjectionManager() : LiveInjectionManager
+        private function get liveInjectionManager():LiveInjectionManager
         {
             if (!_liveInjectionManager)
                 _liveInjectionManager = new LiveInjectionManager();
