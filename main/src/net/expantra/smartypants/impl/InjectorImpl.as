@@ -3,9 +3,9 @@ package net.expantra.smartypants.impl
     import flash.events.IEventDispatcher;
     import flash.utils.getDefinitionByName;
     import flash.utils.getQualifiedClassName;
-
+    
     import mx.logging.ILogger;
-
+    
     import net.expantra.smartypants.Injector;
     import net.expantra.smartypants.InjectorCriteria;
     import net.expantra.smartypants.Provider;
@@ -13,6 +13,7 @@ package net.expantra.smartypants.impl
     import net.expantra.smartypants.dsl.InjectorRuleRoot;
     import net.expantra.smartypants.impl.live.LiveInjectionManager;
     import net.expantra.smartypants.utils.Reflection;
+    import net.expantra.smartypants.utils.reflector.Reflector;
     import net.expantra.smartypants.utils.SPLoggingUtil;
 
     use namespace sp_internal;
@@ -40,6 +41,12 @@ package net.expantra.smartypants.impl
 
         private var _liveInjectionManager:LiveInjectionManager;
 
+        //----------------------------------
+        //  Our own cacheing reflector
+        //----------------------------------
+
+		private var reflector:Reflector;
+
         //--------------------------------------------------------------------------
         //
         //  Constructor
@@ -49,6 +56,8 @@ package net.expantra.smartypants.impl
         public function InjectorImpl()
         {
             super();
+            
+            reflector = new Reflector();
         }
 
         //--------------------------------------------------------------------------
@@ -100,14 +109,8 @@ package net.expantra.smartypants.impl
          */
         private function injectIntoWork(targetInstance:Object):void
         {
-            if (targetInstance == null || targetInstance is Date || Reflection.isSimpleType(targetInstance))
+            if (targetInstance == null || targetInstance is Date || reflector.isSimpleType(targetInstance))
                 return;
-
-            // TODO: Reimplement this. Is it necessary? What do we gain?
-//            if (alreadyInjected(targetInstance))
-//                return;
-//
-//            registerInjection(targetInstance);
 
             try
             {
@@ -496,13 +499,12 @@ package net.expantra.smartypants.impl
 
         /**
          * Bind a rule to an instance (akin to Guice' singleton scope)
+         * <b>NB:</b> As of 2.x, This no longer calls injectInto(instance), a good point was raised
+         * on the RobotLegs group about doing that, and I'm changing my mind :)
          */
         sp_internal function bindInstance(instance:Object, criteria:InjectorCriteria):void
         {
             bindProvider(new InstanceProvider(instance), criteria);
-
-            //Visit the newly bound instance and inject it with whatever it needs
-            injectInto(instance);
         }
 
         /**

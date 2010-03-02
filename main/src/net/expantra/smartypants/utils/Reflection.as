@@ -12,6 +12,7 @@ package net.expantra.smartypants.utils
      * @author josh@gfunk007.com
      *
      */
+    [Deprecated(replacement="net.expantra.smartypants.utils.Reflector")]
     public class Reflection
     {
         /**

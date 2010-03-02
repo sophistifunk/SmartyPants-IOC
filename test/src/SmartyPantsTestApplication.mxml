@@ -3,12 +3,17 @@
 
     <mx:Script>
         <![CDATA[
+        	import tests.ReflectorTestSuite;
             import tests.SmartyPantsTestSuite;
             import flexunit.framework.TestSuite;
 
             private function setup():void
             {
-                testRunner.test = new TestSuite(SmartyPantsTestSuite);
+            	var ts:TestSuite = new TestSuite();
+//            	ts.addTestSuite(SmartyPantsTestSuite);
+            	ts.addTestSuite(ReflectorTestSuite);
+            	
+                testRunner.test = ts;                
                 testRunner.startTest();
             }
         ]]>

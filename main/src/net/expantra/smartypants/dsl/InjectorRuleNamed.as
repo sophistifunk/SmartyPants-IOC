@@ -17,15 +17,11 @@ package net.expantra.smartypants.dsl
          */
         function createInstanceOf(implementingClass:Class):void;
 
-        [Deprecated(replacement="useValue")]
         /**
-         * Deprecated, use "useValue" instead
-         * @private - deprecated
-         */
-        function useInstance(instance:Object):void;
-
-        /**
-         * Binds a value
+         * Binds an existing value
+         * <b>NB:</b> As of 2.x, the value you specify will not be injected into or modified in any way by
+         * SmartyPants-IOC. To mimic the old behaviour, call <code>Injector.injectInto(value)</code> before
+         * using value in the rule.
          */
         function useValue(value:Object):void;
 
@@ -55,7 +51,8 @@ package net.expantra.smartypants.dsl
         function useBindableProperty(host:IEventDispatcher, chain:Object):void;
 
         /**
-         * Revert to default behaviour - will remove any existing rule that matches these criteria
+         * Revert to default behaviour - will remove any existing rule that matches these criteria, for this injector
+         * context and its children only.
          */
         function defaultBehaviour():void;
     }
