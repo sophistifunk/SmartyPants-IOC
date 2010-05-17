@@ -74,6 +74,12 @@ package net.expantra.smartypants.utils.reflector
             
             var method:SPMethod;
             
+            for each(method in allMethods)
+            {
+            	if (method.hasAnnotationNamed(name))
+            		newList.addMethod(method);
+            }
+            
             return newList;
         }
 
