@@ -11,16 +11,19 @@ package tests.support
 			;
 		}
 		
+		[TestAnnotation]
 		public function method2():String
 		{
 			return "a value";
 		}
 		
+		[TestAnnotation("foo",val="bar")]
 		public function method3(param1:String, param2:int):void
 		{
 			;
 		}
 
+		[TestAnnotation("foo",val="baz")]
 		public function method4(param1:String, param2:*):void
 		{
 			;

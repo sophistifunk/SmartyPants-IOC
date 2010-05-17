@@ -14,6 +14,15 @@ package net.expantra.smartypants.utils.reflector
     {
         //--------------------------------------------------------------------------
         //
+        //  Static consts
+        //
+        //--------------------------------------------------------------------------
+
+//		public static const TYPE_VOID:* = {};
+//		public static const TYPE_ANY:* = {};
+
+        //--------------------------------------------------------------------------
+        //
         //  Constructor
         //
         //--------------------------------------------------------------------------
@@ -64,7 +73,7 @@ package net.expantra.smartypants.utils.reflector
          * @param clazz a Class instance (eg: Number, Button, ArrayCollection, etc....)
          * @return the root of the query DSL.
          */
-        public function forClass(clazz:Class):ReflectorDSL
+        public function forClass(clazz:Class):SPClass
         {
         	if (!cacheEnabled)
         	{
@@ -102,9 +111,9 @@ package net.expantra.smartypants.utils.reflector
         	return typeDescriptionCache[clazz];   	
         }
         
-        protected function createReflectorDSLForClass(clazz:Class):ReflectorDSL
+        protected function createReflectorDSLForClass(clazz:Class):SPClass
         {
-        	return new DefaultReflectorDSL(typeDescriptionFor(clazz));
+        	return new SPClassImpl(typeDescriptionFor(clazz), this);
         }
 
     }
