@@ -35,7 +35,18 @@ package net.expantra.smartypants
          */
         public static function match(rule : InjectorCriteria, request : InjectorCriteria) : Boolean
         {
-            return rule.forClass === request.forClass ? (rule.forName == request.forName || rule.wildcard ) : false;
+            //return rule.forClass === request.forClass ? (rule.forName == request.forName || rule.wildcard ) : false;
+            
+            if (rule.forClass !== request.forClass)
+                return false;
+                
+            if (rule.forName == request.forName || rule.wildcard)
+                return true;
+                
+            if (!rule.forName && !request.forName)
+                return true;
+                
+            return false;
         }
 
         /**
